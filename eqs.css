@@ -1,0 +1,1041 @@
+/* Test Drive Article Styles - EQC Review */
+.article-subtitle {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: var(--bg-lighter);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.magazine-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.magazine-info span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.intro-paragraph {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--bg-lighter);
+    border-radius: 8px;
+}
+
+.main-car-image {
+    margin: 2rem 0;
+    position: relative;
+}
+
+.main-car-image img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px var(--shadow-dark);
+}
+
+.brand-explanation, .era-change, .battery-production, .platform-comparison {
+    margin: 3rem 0;
+}
+
+.brand-explanation h2, .era-change h2, .battery-production h2, .platform-comparison h2 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.executive-portraits {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.executive-card {
+    background: var(--bg-light);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.executive-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px var(--shadow-dark);
+}
+
+.executive-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.executive-info {
+    padding: 1.5rem;
+}
+
+.executive-info h4 {
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.executive-info p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+}
+
+.strategy-highlights {
+    background: var(--bg-darker);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    border: 1px solid var(--border-color);
+}
+
+.strategy-highlights ul {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.strategy-highlights li {
+    padding: 0.5rem 0;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+}
+
+.strategy-highlights li::before {
+    content: '•';
+    color: var(--primary-color);
+    font-weight: bold;
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.strategy-highlights li strong {
+    color: var(--text-light);
+    margin-right: 0.5rem;
+}
+
+.investment-note {
+    background: linear-gradient(135deg, rgba(0, 160, 227, 0.1) 0%, rgba(0, 120, 182, 0.1) 100%);
+    border-left: 4px solid var(--primary-color);
+    padding: 1rem 1.5rem;
+    margin-top: 1rem;
+    border-radius: 4px;
+}
+
+.investment-note p {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text-light);
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.battery-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 1.5rem 0;
+}
+
+.battery-info {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.battery-info h3 {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.battery-info p {
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.battery-image {
+    margin: 2rem 0;
+}
+
+.battery-image img {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px var(--shadow-dark);
+}
+
+.platform-comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.platform-card {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.platform-card.current {
+    border-top: 4px solid var(--primary-color);
+}
+
+.platform-card.future {
+    border-top: 4px solid var(--gold-color);
+}
+
+.platform-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.platform-header h3 {
+    color: var(--text-light);
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.platform-status {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.platform-card.current .platform-status {
+    background: rgba(0, 160, 227, 0.2);
+    color: var(--primary-color);
+}
+
+.platform-card.future .platform-status {
+    background: rgba(212, 175, 55, 0.2);
+    color: var(--gold-color);
+}
+
+.platform-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.platform-card li {
+    padding: 0.5rem 0;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.platform-card li i {
+    color: var(--primary-color);
+}
+
+.competitor-note {
+    background: var(--bg-darker);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-top: 1rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.competitor-note p {
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.competitor-note strong {
+    color: var(--text-light);
+}
+
+.compartment-analysis {
+    background: var(--bg-lighter);
+    border-radius: 8px;
+    padding: 2rem;
+    margin: 2rem 0;
+    border: 1px solid var(--border-color);
+}
+
+.analysis-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.analysis-text ul {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.analysis-text li {
+    padding: 0.5rem 0;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+}
+
+.analysis-text li::before {
+    content: '•';
+    color: var(--primary-color);
+    font-weight: bold;
+    margin-right: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.analysis-image img {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px var(--shadow-dark);
+}
+
+.hydrogen-note {
+    background: linear-gradient(135deg, rgba(0, 160, 227, 0.05) 0%, rgba(212, 175, 55, 0.05) 100%);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    border-left: 4px solid var(--gold-color);
+}
+
+.hydrogen-content h3 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--gold-color);
+    margin-bottom: 1rem;
+}
+
+.production-details {
+    margin: 2rem 0;
+}
+
+.production-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.production-location {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.production-location h4 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.production-location p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.dimensions-comparison {
+    margin: 2rem 0;
+}
+
+.dimensions-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    background: var(--bg-light);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px var(--shadow-dark);
+}
+
+.dimensions-table th, .dimensions-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dimensions-table th {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.dimensions-table tr:last-child td {
+    border-bottom: none;
+}
+
+.dimensions-table td strong {
+    color: var(--primary-color);
+}
+
+.weight-explanation {
+    background: var(--bg-darker);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-top: 1rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.weight-explanation p {
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.weight-explanation strong {
+    color: var(--text-light);
+}
+
+.performance-specs {
+    margin: 3rem 0;
+}
+
+.specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.spec-card {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    text-align: center;
+    transition: var(--transition);
+}
+
+.spec-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
+    box-shadow: 0 10px 25px rgba(0, 160, 227, 0.2);
+}
+
+.spec-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+
+.spec-icon i {
+    font-size: 1.5rem;
+    color: var(--text-light);
+}
+
+.spec-card h3 {
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.spec-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0.5rem 0;
+}
+
+.spec-note {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.charging-info {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: var(--bg-darker);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.charging-info h3 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.charging-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.charging-method {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.charging-method h4 {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.charging-method p {
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.charging-port {
+    text-align: center;
+}
+
+.charging-port img {
+    max-width: 300px;
+    border-radius: 8px;
+    margin: 0 auto;
+    display: block;
+}
+
+.interior-review {
+    margin: 3rem 0;
+}
+
+.interior-description {
+    margin-bottom: 2rem;
+}
+
+.interior-highlights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 1.5rem 0;
+}
+
+.highlight-item {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.highlight-item h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.highlight-item ul {
+    list-style: none;
+    padding: 0;
+}
+
+.highlight-item li {
+    padding: 0.3rem 0;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+}
+
+.highlight-item li::before {
+    content: '•';
+    margin-right: 0.5rem;
+    color: var(--primary-color);
+}
+
+.interior-gallery {
+    margin: 2rem 0;
+}
+
+.interior-gallery img {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px var(--shadow-dark);
+}
+
+.driving-experience {
+    margin: 3rem 0;
+}
+
+.driving-points {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.driving-point {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.driving-point h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.driving-point p {
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+.trunk-space {
+    margin: 2rem 0;
+}
+
+.trunk-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+    margin-top: 1.5rem;
+}
+
+.trunk-image img {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px var(--shadow-dark);
+}
+
+.trunk-info p {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.trunk-info ul {
+    list-style: none;
+    padding: 0;
+}
+
+.trunk-info li {
+    padding: 0.5rem 0;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+}
+
+.trunk-info li::before {
+    content: '•';
+    color: var(--primary-color);
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+.safety-features {
+    margin: 2rem 0;
+    padding: 2rem;
+    background: var(--bg-darker);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.safety-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.safety-image img {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px var(--shadow-dark);
+}
+
+.pricing-info {
+    margin: 2rem 0;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.price-card {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.price-card h3 {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.price {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 1rem 0;
+}
+
+.price-note {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.technical-specs-table {
+    margin: 3rem 0;
+}
+
+.full-specs-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    background: var(--bg-light);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px var(--shadow-dark);
+}
+
+.full-specs-table th {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+    color: var(--text-light);
+    padding: 1.5rem;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.full-specs-table td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-muted);
+}
+
+.full-specs-table tr:last-child td {
+    border-bottom: none;
+}
+
+.full-specs-table td:first-child {
+    color: var(--text-light);
+    font-weight: 500;
+    width: 40%;
+}
+
+/* ИСПРАВЛЕННЫЙ БЛОК ВЫВОДОВ - ОСНОВНОЕ ИЗМЕНЕНИЕ */
+.conclusion {
+    margin: 3rem 0;
+    padding: 2.5rem;
+    background: linear-gradient(135deg, rgba(0, 160, 227, 0.1) 0%, rgba(212, 175, 55, 0.1) 100%);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.conclusion h2 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+    text-align: center;
+    justify-content: center;
+}
+
+.conclusion-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.verdict {
+    width: 100%;
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+}
+
+.verdict h3 {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.verdict p {
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+.conclusion-bottom {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+}
+
+.pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    grid-column: span 2; /* Занимает две колонки */
+}
+
+.pros, .cons {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    height: 100%; /* Чтобы оба блока были одинаковой высоты */
+    display: flex;
+    flex-direction: column;
+}
+
+.pros h4, .cons h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.pros h4 {
+    color: #22c55e;
+}
+
+.cons h4 {
+    color: #ef4444;
+}
+
+.pros ul, .cons ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1; /* Растягиваем списки чтобы заполнить доступное пространство */
+}
+
+.pros li, .cons li {
+    padding: 0.5rem 0;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+    line-height: 1.5;
+}
+
+.pros li::before {
+    content: '✓';
+    color: #22c55e;
+    font-weight: bold;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+.cons li::before {
+    content: '✗';
+    color: #ef4444;
+    font-weight: bold;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+.final-thought {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    height: 100%; /* Высота как у pros-cons */
+    display: flex;
+    flex-direction: column;
+}
+
+.final-thought h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.final-thought p {
+    color: var(--text-muted);
+    line-height: 1.6;
+    flex-grow: 1; /* Растягиваем текст чтобы заполнить доступное пространство */
+    margin: 0;
+}
+
+.article-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.test-drive-details p {
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.test-drive-details strong {
+    color: var(--text-light);
+}
+
+.competitor-mention h4 {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.competitor-logos {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.competitor-logo {
+    padding: 0.5rem 1rem;
+    background: var(--bg-light);
+    color: var(--text-muted);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1024px) {
+    .conclusion-bottom {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .pros-cons {
+        grid-column: span 1;
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .executive-portraits,
+    .battery-info-grid,
+    .platform-comparison-grid,
+    .analysis-content,
+    .trunk-details,
+    .safety-content,
+    .charging-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .interior-highlights {
+        grid-template-columns: 1fr;
+    }
+    
+    .production-grid,
+    .specs-grid,
+    .pricing-grid,
+    .driving-points {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+    
+    .article-footer {
+        flex-direction: column;
+    }
+    
+    .magazine-info {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .main-car-image img {
+        height: 250px;
+    }
+    
+    /* Адаптация выводов для мобильных */
+    .conclusion-bottom {
+        grid-template-columns: 1fr;
+    }
+    
+    .pros-cons {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .pros, .cons, .final-thought {
+        min-height: auto;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .dimensions-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .full-specs-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .specs-grid,
+    .pricing-grid,
+    .driving-points {
+        grid-template-columns: 1fr;
+    }
+    
+    .charging-details {
+        grid-template-columns: 1fr;
+    }
+    
+    .pros-cons {
+        grid-template-columns: 1fr;
+    }
+}

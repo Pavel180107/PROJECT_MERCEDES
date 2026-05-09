@@ -1,0 +1,191 @@
+/* modal.css */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.modal.active {
+    display: flex;
+    opacity: 1;
+    visibility: visible;
+    animation: modalBackdropFade 0.4s ease forwards;
+}
+
+@keyframes modalBackdropFade {
+    from {
+        background: rgba(0, 0, 0, 0);
+        backdrop-filter: blur(0);
+    }
+    to {
+        background: rgba(0, 0, 0, 0.95);
+        backdrop-filter: blur(10px);
+    }
+}
+
+.modal-content {
+    background: var(--bg-light);
+    border-radius: 12px;
+    padding: 3rem;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    transform: translateY(30px) scale(0.95);
+    opacity: 0;
+    animation: modalSlideUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.2s;
+    box-shadow: 0 25px 50px rgba(0, 120, 182, 0.2);
+    border: 1px solid rgba(0, 160, 227, 0.3);
+    border-top: 3px solid var(--primary-color);
+}
+
+@keyframes modalSlideUp {
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-content::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--primary-light), var(--primary-color));
+    border-radius: 12px 12px 0 0;
+}
+
+.close-modal {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: var(--transition);
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--bg-lighter);
+    border: 1px solid var(--border-color);
+    z-index: 2;
+}
+
+.close-modal:hover {
+    color: var(--primary-color);
+    background: var(--bg-darker);
+    transform: rotate(90deg);
+    border-color: var(--primary-color);
+}
+
+/* Анимация закрытия */
+.modal.closing {
+    animation: modalFadeOut 0.4s ease forwards;
+}
+
+@keyframes modalFadeOut {
+    from {
+        opacity: 1;
+        visibility: visible;
+    }
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.modal.closing .modal-content {
+    animation: modalSlideDown 0.4s cubic-bezier(0.6, -0.28, 0.735, 0.045) forwards;
+}
+
+@keyframes modalSlideDown {
+    to {
+        transform: translateY(30px) scale(0.95);
+        opacity: 0;
+    }
+}
+
+/* Форма в модальном окне */
+#modal-contact-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+#modal-contact-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-light);
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#modal-contact-form input,
+#modal-contact-form textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-lighter);
+    color: var(--text-light);
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+#modal-contact-form input:focus,
+#modal-contact-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 160, 227, 0.1);
+}
+
+#modal-contact-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+#modal-contact-form .btn {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+/* Сообщения формы */
+.modal .form-message {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    border-radius: 4px;
+    text-align: center;
+    display: none;
+    font-weight: 500;
+}
+
+.modal .form-message.success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+    border: 1px solid #22c55e;
+    display: block;
+}
+
+.modal .form-message.error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid #ef4444;
+    display: block;
+}

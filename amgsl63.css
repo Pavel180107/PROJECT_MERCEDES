@@ -1,0 +1,899 @@
+/* Mercedes-AMG SL63 Test Drive Article Styles */
+.article-subtitle {
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--bg-lighter) 0%, var(--bg-light) 100%);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.author-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.author-info span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.intro-paragraph {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--bg-lighter);
+    border-radius: 8px;
+}
+
+.main-car-image {
+    margin: 2rem 0;
+    position: relative;
+}
+
+.main-car-image img {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px var(--shadow-dark);
+}
+
+.historical-context, .engine-performance, .acceleration-test,
+.transmission-review, .braking-performance, .handling-section,
+.driving-experience, .pricing-section, .technical-specs,
+.conclusion-section {
+    margin: 3rem 0;
+}
+
+.historical-context h2, .engine-performance h2, .acceleration-test h2,
+.transmission-review h2, .braking-performance h2, .handling-section h2,
+.driving-experience h2, .pricing-section h2, .technical-specs h2,
+.conclusion-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+   color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(255, 0, 0, 0.3);
+}
+
+.context-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.context-image img {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px var(--shadow-dark);
+}
+
+.engine-highlight {
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 1.5rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 2rem;
+    border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.engine-badge {
+    text-align: center;
+}
+
+.engine-badge h3 {
+    color: #ff0000;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.engine-badge p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.engine-specs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+
+.spec {
+    text-align: center;
+}
+
+.spec-label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.spec-value {
+    display: block;
+    color: var(--text-light);
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.comparison-table {
+    margin: 2rem 0;
+    overflow-x: auto;
+}
+
+.comparison-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-light);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.comparison-table th {
+     background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: var(--text-light);
+    padding: 1rem;
+    text-align: left;
+    font-weight: 500;
+}
+
+.comparison-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-muted);
+}
+
+.comparison-table tr:last-child td {
+    border-bottom: none;
+}
+
+.comparison-table td strong {
+    color: var(--text-light);
+}
+
+.acceleration-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.test-results {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.result-card {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.result-card:hover {
+    transform: translateY(-5px);
+    border-color: #ff0000;
+    box-shadow: 0 10px 25px rgba(255, 0, 0, 0.2);
+}
+
+.result-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+
+.result-icon i {
+    color: var(--text-light);
+    font-size: 1.2rem;
+}
+
+.result-card h4 {
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.result-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ff0000;
+    margin: 0.5rem 0;
+}
+
+.result-note {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.acceleration-note {
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.05) 0%, rgba(212, 175, 55, 0.05) 100%);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border-left: 4px solid #ff0000;
+}
+
+.acceleration-note h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.gallery-section {
+    margin-top: 3rem;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.grid-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.grid-item img:hover {
+    transform: scale(1.03);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.transmission-features {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+.transmission-features h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.transmission-features ul {
+    list-style: none;
+    padding: 0;
+}
+
+.transmission-features li {
+    padding: 0.5rem 0;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+}
+
+.transmission-features li::before {
+    content: '•';
+    margin-right: 0.5rem;
+    color: #ff0000;
+}
+
+.braking-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.braking-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 1.5rem 0;
+}
+
+.braking-stat {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    color: #ff0000;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.braking-image img {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px var(--shadow-dark);
+}
+
+.handling-intro {
+    background: var(--bg-lighter);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.performance-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.metric-card {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.metric-card h4 {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.metric-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #ff0000;
+    margin: 0.5rem 0;
+}
+
+.metric-note {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.tires-info {
+    background: var(--bg-darker);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.tires-info h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.suspension-system {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.05) 0%, rgba(0, 0, 0, 0.05) 100%);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.suspension-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.comparison-item {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.comparison-item h4 {
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.experience-points {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.point-card {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+.point-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.interior-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.interior-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.interior-item p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.tech-critique {
+    background: var(--bg-lighter);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    border-left: 4px solid #ff9900;
+}
+
+.tech-critique h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.pricing-content {
+    background: var(--bg-lighter);
+    border-radius: 8px;
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+}
+
+.price-breakdown {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.price-item {
+    text-align: center;
+}
+
+.price-item.base {
+    border-right: 1px solid var(--border-color);
+    padding-right: 2rem;
+}
+
+.price-item.total {
+    border-left: 1px solid var(--border-color);
+    padding-left: 2rem;
+}
+
+.price-item h4 {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ff0000;
+    margin: 0.5rem 0;
+}
+
+.price-item ul {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+
+.price-item li {
+    padding: 0.5rem 0;
+    color: var(--text-muted);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.price-item li:last-child {
+    border-bottom: none;
+}
+
+.price-item strong {
+    color: var(--text-light);
+    float: right;
+}
+
+.technical-specs {
+    margin: 3rem 0;
+}
+
+.specs-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    background: var(--bg-light);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px var(--shadow-dark);
+}
+
+.specs-table th {
+   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: var(--text-light);
+    padding: 1.5rem;
+    text-align: center;
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.specs-table td {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-muted);
+}
+
+.specs-table tr:last-child td {
+    border-bottom: none;
+}
+
+.specs-table td:first-child {
+    color: var(--text-light);
+    font-weight: 500;
+    width: 40%;
+}
+
+.conclusion-content {
+    background: linear-gradient(135deg, rgba(255, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+    border-radius: 12px;
+    padding: 2.5rem;
+    border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+.main-verdict {
+    margin-bottom: 2rem;
+}
+
+.key-point {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    border-left: 4px solid #ff0000;
+}
+
+.key-point h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    margin-bottom: 0.5rem;
+}
+
+.pros-cons-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.pros-card, .cons-card, .target-card {
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.pros-card {
+    border-top: 4px solid #22c55e;
+}
+
+.cons-card {
+    border-top: 4px solid #ef4444;
+}
+
+.target-card {
+    border-top: 4px solid #ff0000;
+}
+
+.pros-card h4, .cons-card h4, .target-card h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.pros-card h4 {
+    color: #22c55e;
+}
+
+.cons-card h4 {
+    color: #ef4444;
+}
+
+.pros-card ul, .cons-card ul, .target-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem 0;
+    flex-grow: 1;
+}
+
+.pros-card li, .cons-card li, .target-card li {
+    padding: 0.5rem 0;
+    color: var(--text-muted);
+    display: flex;
+    align-items: flex-start;
+    line-height: 1.5;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pros-card li:last-child, .cons-card li:last-child, .target-card li:last-child {
+    border-bottom: none;
+}
+
+.pros-card li::before {
+    content: '✓';
+    color: #22c55e;
+    font-weight: bold;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+.cons-card li::before {
+    content: '✗';
+    color: #ef4444;
+    font-weight: bold;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+.target-card li::before {
+    content: '•';
+    color: #ff0000;
+    font-weight: bold;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+.target-card p {
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.final-rating {
+    background: var(--bg-lighter);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.rating-card h4 {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.rating-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #ff0000;
+    margin: 1rem 0;
+}
+
+.rating-value span {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+}
+
+.rating-breakdown {
+    max-width: 400px;
+    margin: 1.5rem auto 0;
+}
+
+.rating-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.rating-item:last-child {
+    border-bottom: none;
+}
+
+.rating-score {
+    color: #ff0000;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.article-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.test-details h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.test-details p {
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.test-details strong {
+    color: var(--text-light);
+    margin-right: 0.5rem;
+}
+
+.competitor-mention h4 {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.competitor-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.competitor {
+    padding: 0.5rem 1rem;
+    background: var(--bg-light);
+    color: var(--text-muted);
+    border-radius: 20px;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.competitor:hover {
+    background: #ff0000;
+    color: var(--text-light);
+    border-color: #ff0000;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1024px) {
+    .test-results,
+    .performance-metrics,
+    .experience-points {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .pros-cons-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .context-content,
+    .acceleration-content,
+    .braking-content,
+    .price-breakdown {
+        grid-template-columns: 1fr;
+    }
+    
+    .engine-specs,
+    .transmission-features,
+    .braking-stats,
+    .suspension-comparison,
+    .interior-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .image-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .test-results,
+    .performance-metrics,
+    .experience-points {
+        grid-template-columns: 1fr;
+    }
+    
+    .article-footer {
+        flex-direction: column;
+    }
+    
+    .author-info {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .main-car-image img {
+        height: 300px;
+    }
+    
+    .engine-highlight {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .price-item.base,
+    .price-item.total {
+        border: none;
+        padding: 0;
+    }
+    
+    .price-breakdown {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .image-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .engine-specs {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .specs-table {
+        display: block;
+        overflow-x: auto;
+    }
+}
