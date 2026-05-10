@@ -35,7 +35,7 @@ class OrderManager {
                 INSERT INTO auto_orders (user_id, model_id, package_id, total_price, status)
                 VALUES (?, ?, ?, ?, 'new')
             ");
-            $stmt->execute([$userId, $modelId, $packageId ?: null, $totalPrice]);
+             $stmt->execute([$userId, $modelId, $packageId, $totalPrice]);
             $orderId = $this->db->lastInsertId();
 
             if (!empty($serviceIds)) {
@@ -54,17 +54,20 @@ class OrderManager {
     }
 
     // Обновить существующий заказ (удаляем старый, создаём новый – упрощённо)
-    public function updateOrder($orderId, $modelId, $packageId, $serviceIds, $totalPrice) {
-        $this->db->beginTransaction();
+     public function updateOrder($orderId, $modelId, $packageId, $serviceIds, $totalPrice) {
         try {
+            $this->db->beginTransaction();
             $stmt = $this->db->prepare("
-                UPDATE auto_orders SET model_id = ?, package_id = ?, total_price = ?
+                UPDATE auto_orders 
+                SET model_id = ?, package_id = ?, total_price = ?
                 WHERE id = ?
             ");
-            $stmt->execute([$modelId, $packageId ?: null, $totalPrice, $orderId]);
+            $stmt->execute([$modelId, $packageId, $totalPrice, $orderId]);
 
-            // Обновляем услуги
+            // Удаляем старые услуги
             $this->db->prepare("DELETE FROM auto_order_services WHERE order_id = ?")->execute([$orderId]);
+
+            // Добавляем новые
             if (!empty($serviceIds)) {
                 $stmt = $this->db->prepare("INSERT INTO auto_order_services (order_id, service_id) VALUES (?, ?)");
                 foreach ($serviceIds as $sid) {
@@ -75,7 +78,7 @@ class OrderManager {
             return true;
         } catch (Exception $e) {
             $this->db->rollBack();
-            error_log($e->getMessage());
+            error_log("Order update error: " . $e->getMessage());
             return false;
         }
     }

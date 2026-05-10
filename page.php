@@ -440,7 +440,9 @@ $formData = [
             </div>
         <?php endif; ?>
     </section>
-
+<?php if ($isLoggedIn): ?>
+    <div id="user-logged-indicator" style="display:none;" data-logged="true"></div>
+<?php endif; ?>
            
 
     <?php if (isset($_SESSION['flash'])): ?>

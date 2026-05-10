@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('form-message').style.display = 'block';
             return;
         }
-        const isEdit = document.querySelector('.logged-in-info') !== null;
+        const isEdit = document.getElementById('user-logged-indicator') !== null;
         const method = isEdit ? 'PUT' : 'POST';
         try {
             const response = await fetch('/project/index.php', {
