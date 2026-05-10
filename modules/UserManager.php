@@ -8,6 +8,52 @@ class UserManager {
         $this->db = Database::getInstance()->getConnection();
     }
 
+    // Валидация ФИО (только буквы, пробелы, дефис)
+    public static function validateFullName($name) {
+        if (empty($name)) {
+            return 'ФИО обязательно для заполнения.';
+        }
+        if (!preg_match('/^[а-яА-ЯёЁa-zA-Z\s\-]+$/u', $name)) {
+            return 'ФИО может содержать только буквы (русские или латинские), пробелы и дефис.';
+        }
+        if (strlen($name) > 150) {
+            return 'ФИО не должно превышать 150 символов.';
+        }
+        return null;
+    }
+
+    // Валидация телефона
+    public static function validatePhone($phone) {
+        if (empty($phone)) {
+            return 'Телефон обязателен.';
+        }
+        // Очистка от пробелов, скобок, дефисов, плюса
+        $clean = preg_replace('/[^\d+]/', '', $phone);
+        if (!preg_match('/^(\+7|8)?\d{10}$/', $clean)) {
+            return 'Телефон должен быть в формате +7XXXXXXXXXX или 8XXXXXXXXXX (10 цифр после кода).';
+        }
+        return null;
+    }
+
+    // Валидация email
+    public static function validateEmail($email) {
+        if (empty($email)) {
+            return 'Email обязателен.';
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return 'Введите корректный email (например, name@example.com).';
+        }
+        return null;
+    }
+
+    // Валидация согласия
+    public static function validateConsent($consent) {
+        if (!$consent) {
+            return 'Необходимо подтвердить согласие на обработку персональных данных.';
+        }
+        return null;
+    }
+
     public function generateUniqueLogin() {
         do {
             $login = 'client_' . substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyz'), 0, 8);
@@ -22,7 +68,17 @@ class UserManager {
         return substr(str_shuffle($chars), 0, $len);
     }
 
+    // Создание пользователя с проверкой
     public function createUser($full_name, $email, $phone, $consent) {
+        $errors = [];
+        if ($err = self::validateFullName($full_name)) $errors['full_name'] = $err;
+        if ($err = self::validateEmail($email)) $errors['email'] = $err;
+        if ($err = self::validatePhone($phone)) $errors['phone'] = $err;
+        if ($err = self::validateConsent($consent)) $errors['consent'] = $err;
+        if (!empty($errors)) {
+            return ['success' => false, 'errors' => $errors];
+        }
+
         $login = $this->generateUniqueLogin();
         $plainPass = $this->generatePassword();
         $passHash = password_hash($plainPass, PASSWORD_DEFAULT);
@@ -33,10 +89,31 @@ class UserManager {
         ");
         $stmt->execute([$full_name, $email, $phone, $consent ? 1 : 0, $login, $passHash]);
         return [
+            'success' => true,
             'id' => $this->db->lastInsertId(),
             'login' => $login,
             'password' => $plainPass
         ];
+    }
+
+    // Обновление пользователя с проверкой
+    public function updateUser($userId, $full_name, $email, $phone, $consent) {
+        $errors = [];
+        if ($err = self::validateFullName($full_name)) $errors['full_name'] = $err;
+        if ($err = self::validateEmail($email)) $errors['email'] = $err;
+        if ($err = self::validatePhone($phone)) $errors['phone'] = $err;
+        if ($err = self::validateConsent($consent)) $errors['consent'] = $err;
+        if (!empty($errors)) {
+            return ['success' => false, 'errors' => $errors];
+        }
+
+        $stmt = $this->db->prepare("
+            UPDATE auto_users 
+            SET full_name = ?, email = ?, phone = ?, consent = ?
+            WHERE id = ?
+        ");
+        $stmt->execute([$full_name, $email, $phone, $consent ? 1 : 0, $userId]);
+        return ['success' => true];
     }
 
     public function authenticate($login, $password) {
@@ -54,16 +131,4 @@ class UserManager {
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
-    // НОВЫЙ МЕТОД – обновление данных пользователя
-    public function updateUser($userId, $full_name, $email, $phone, $consent) {
-        $stmt = $this->db->prepare("
-            UPDATE auto_users 
-            SET full_name = ?, email = ?, phone = ?, consent = ?
-            WHERE id = ?
-        ");
-        return $stmt->execute([$full_name, $email, $phone, $consent ? 1 : 0, $userId]);
-    }
-
-
 }

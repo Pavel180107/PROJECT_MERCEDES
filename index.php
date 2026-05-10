@@ -14,73 +14,41 @@ function sendJson($data, $code = 200) {
 }
 
 
-// Функция валидации полей (возвращает массив ошибок)
-function validateFields($full_name, $email, $phone, $consent) {
-    $errors = [];
-    // ФИО: только буквы (русские/лат), пробелы, дефис
-    if (empty($full_name)) {
-        $errors['full_name'] = 'ФИО обязательно для заполнения.';
-    } elseif (!preg_match('/^[a-zA-Zа-яА-ЯёЁ\s\-]+$/u', $full_name)) {
-        $errors['full_name'] = 'ФИО должно содержать только буквы (русские или латинские), пробелы и дефис. Пример: Иванов Иван Иванович или Ivanov Ivan.';
-    } elseif (strlen($full_name) > 150) {
-        $errors['full_name'] = 'ФИО не должно превышать 150 символов.';
-    }
-
-    // Email
-    if (empty($email)) {
-        $errors['email'] = 'Email обязателен для заполнения.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = 'Введите корректный email, например: name@example.com.';
-    }
-
-    // Телефон
-    if (empty($phone)) {
-        $errors['phone'] = 'Телефон обязателен для заполнения.';
-    } elseif (!preg_match('/^[\d\s\-\+\(\)]{6,12}$/', $phone)) {
-        $errors['phone'] = 'Телефон должен содержать от 6 до 12 символов, разрешены цифры, +, -, (, ), пробел. Пример: +7 (912) 345-67-89.';
-    }
-
-    // Согласие
-    if (!$consent) {
-        $errors['consent'] = 'Необходимо подтвердить согласие на обработку персональных данных.';
-    }
-
-    return $errors;
-}
-
-
-
-// Определяем, AJAX ли запрос
 $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
-// Обработка AJAX-запросов (всегда POST, но с полем _method для PUT)
+// Обработка AJAX
 if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
     if (!$input) sendJson(['error' => 'Invalid JSON'], 400);
 
     $method = isset($input['_method']) && $input['_method'] === 'PUT' ? 'PUT' : 'POST';
 
-    // Обязательные поля (package_id не обязателен)
     $required = ['full_name', 'email', 'phone', 'consent', 'model_id', 'services', 'total_price'];
     foreach ($required as $field) {
         if (!isset($input[$field])) sendJson(['error' => "Missing field: $field"], 422);
     }
 
-    $full_name = trim($input['full_name'] ?? '');
-    $email = trim($input['email'] ?? '');
-    $phone = trim($input['phone'] ?? '');
-    $consent = (bool)($input['consent'] ?? false);
-    $modelId = (int)($input['model_id'] ?? 0);
+    $full_name = trim($input['full_name']);
+    $email = trim($input['email']);
+    $phone = trim($input['phone']);
+    $consent = (bool)$input['consent'];
+    $modelId = (int)$input['model_id'];
     $packageId = isset($input['package_id']) && $input['package_id'] !== '' ? (int)$input['package_id'] : null;
-    $serviceIds = array_map('intval', $input['services'] ?? []);
-    $totalPrice = (float)($input['total_price'] ?? 0);
+    $serviceIds = array_map('intval', $input['services']);
+    $totalPrice = (float)$input['total_price'];
+
+    $userMan = new UserManager();
+    $orderMan = new OrderManager();
+    $userId = $_SESSION['auto_user_id'] ?? null;
 
     if ($method === 'POST') {
-        // Создание заказа
+        // СОЗДАНИЕ НОВОГО ЗАКАЗА
         if (!$userId) {
             $newUser = $userMan->createUser($full_name, $email, $phone, $consent);
-            if (!$newUser) sendJson(['error' => 'Failed to create user'], 500);
+            if (!$newUser['success']) {
+                sendJson(['errors' => $newUser['errors']], 422);
+            }
             $userId = $newUser['id'];
             $_SESSION['auto_user_id'] = $userId;
             $_SESSION['auto_user_login'] = $newUser['login'];
@@ -92,19 +60,31 @@ if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
                     'login' => $newUser['login'],
                     'password' => $newUser['password']
                 ], 201);
-            } else sendJson(['error' => 'Failed to create order'], 500);
+            } else {
+                sendJson(['error' => 'Failed to create order'], 500);
+            }
         } else {
-             $userMan->updateUser($userId, $full_name, $email, $phone, $consent);
+            // Обновляем данные пользователя
+            $update = $userMan->updateUser($userId, $full_name, $email, $phone, $consent);
+            if (!$update['success']) {
+                sendJson(['errors' => $update['errors']], 422);
+            }
             $orderId = $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
-            if ($orderId) sendJson(['message' => 'Order created', 'order_id' => $orderId], 201);
-            else sendJson(['error' => 'Failed to create order'], 500);
+            if ($orderId) {
+                sendJson(['message' => 'Order created', 'order_id' => $orderId], 201);
+            } else {
+                sendJson(['error' => 'Failed to create order'], 500);
+            }
         }
-    } else { // PUT
+    } else { // PUT (обновление)
         if (!$userId) sendJson(['error' => 'Unauthorized'], 401);
-         $userMan->updateUser($userId, $full_name, $email, $phone, $consent);
+        // Обновляем данные пользователя
+        $update = $userMan->updateUser($userId, $full_name, $email, $phone, $consent);
+        if (!$update['success']) {
+            sendJson(['errors' => $update['errors']], 422);
+        }
         $lastOrder = $orderMan->getLastOrderByUser($userId);
         if (!$lastOrder) {
-            // Нет заказа – создаём новый
             $orderId = $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
             if ($orderId) sendJson(['message' => 'Order created (no existing)', 'order_id' => $orderId], 201);
             else sendJson(['error' => 'Failed to create order'], 500);
@@ -116,10 +96,8 @@ if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Не AJAX – показываем HTML-страницу (fallback для отключённого JS)
-// Также обрабатываем обычный POST (без AJAX) – fallback
+// Fallback для отключённого JS (без AJAX)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isAjax) {
-    // Fallback: стандартная отправка формы
     $full_name = trim($_POST['full_name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
@@ -129,41 +107,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isAjax) {
     $serviceIds = isset($_POST['services']) ? array_map('intval', $_POST['services']) : [];
     $totalPrice = (float)($_POST['total_price'] ?? 0);
 
-
-  $validationErrors = validateFields($full_name, $email, $phone, $consent);
-    if (!empty($validationErrors)) {
-        // Перенаправляем обратно с ошибками в сессии
-        $_SESSION['flash_errors'] = $validationErrors;
-        $_SESSION['old_input'] = $_POST;
-        header('Location: index.php');
-        exit;
-    }
-
-
-
     $userMan = new UserManager();
     $orderMan = new OrderManager();
     $userId = $_SESSION['auto_user_id'] ?? null;
 
     if (!$userId) {
         $newUser = $userMan->createUser($full_name, $email, $phone, $consent);
-        if ($newUser) {
-            $_SESSION['auto_user_id'] = $newUser['id'];
-            $_SESSION['auto_user_login'] = $newUser['login'];
-            $orderMan->createOrder($newUser['id'], $modelId, $packageId, $serviceIds, $totalPrice);
-            $_SESSION['flash'] = "Заказ создан! Ваш логин: {$newUser['login']}, пароль: {$newUser['password']}";
-        } else {
-            $_SESSION['flash'] = "Ошибка при создании заказа";
+        if (!$newUser['success']) {
+            $_SESSION['flash'] = 'Ошибка: ' . implode(', ', $newUser['errors']);
+            header('Location: index.php');
+            exit;
         }
+        $_SESSION['auto_user_id'] = $newUser['id'];
+        $_SESSION['auto_user_login'] = $newUser['login'];
+        $orderMan->createOrder($newUser['id'], $modelId, $packageId, $serviceIds, $totalPrice);
+        $_SESSION['flash'] = "Заказ создан! Ваш логин: {$newUser['login']}, пароль: {$newUser['password']}";
     } else {
-        $userMan->updateUser($userId, $full_name, $email, $phone, $consent);
+        $update = $userMan->updateUser($userId, $full_name, $email, $phone, $consent);
+        if (!$update['success']) {
+            $_SESSION['flash'] = 'Ошибка: ' . implode(', ', $update['errors']);
+            header('Location: index.php');
+            exit;
+        }
         $lastOrder = $orderMan->getLastOrderByUser($userId);
         if ($lastOrder) {
             $orderMan->updateOrder($lastOrder['id'], $modelId, $packageId, $serviceIds, $totalPrice);
-            $_SESSION['flash'] = "Заказ обновлён";
+            $_SESSION['flash'] = 'Заказ обновлён';
         } else {
             $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
-            $_SESSION['flash'] = "Заказ создан";
+            $_SESSION['flash'] = 'Заказ создан';
         }
     }
     header('Location: index.php');
@@ -196,19 +168,6 @@ $formData = [
 
 $flash = $_SESSION['flash'] ?? '';
 unset($_SESSION['flash']);
-
-$flashErrors = $_SESSION['flash_errors'] ?? [];
-unset($_SESSION['flash_errors']);
-$oldInput = $_SESSION['old_input'] ?? [];
-unset($_SESSION['old_input']);
-
-// Если есть ошибки из fallback, подставляем старые значения
-if (!empty($flashErrors)) {
-    $formData['full_name'] = $oldInput['full_name'] ?? $formData['full_name'];
-    $formData['email'] = $oldInput['email'] ?? $formData['email'];
-    $formData['phone'] = $oldInput['phone'] ?? $formData['phone'];
-    $formData['consent'] = isset($oldInput['consent']);
-}
 
 ?>
 <!DOCTYPE html>
@@ -529,42 +488,36 @@ if (!empty($flashErrors)) {
     </section>
     <!-- ...  ... -->
 
-    <section class="order-section" id="order-form-section">
+     <section class="order-section" id="order-form-section">
         <h2 style="text-align:center;">Оформить заказ</h2>
         <p style="text-align:center;">Заполните форму, и менеджер свяжется с вами</p>
 
         <?php if ($flash): ?>
             <div class="success-message"><?= htmlspecialchars($flash) ?></div>
         <?php endif; ?>
-        <?php if (!empty($flashErrors)): ?>
-            <div class="error-message">Исправьте ошибки в форме:</div>
-        <?php endif; ?>
 
         <form id="order-form" action="index.php" method="post">
             <div class="form-group">
                 <label>ФИО</label>
-                <input type="text" name="full_name" id="full_name" value="<?= htmlspecialchars($formData['full_name']) ?>" class="<?= isset($flashErrors['full_name']) ? 'error-border' : '' ?>">
-                <div class="field-error" id="error-full_name"><?= htmlspecialchars($flashErrors['full_name'] ?? '') ?></div>
+                <input type="text" name="full_name" id="full_name" value="<?= htmlspecialchars($formData['full_name']) ?>" required>
+                <div class="field-error" id="error-full_name"></div>
             </div>
-
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" name="email" id="email" value="<?= htmlspecialchars($formData['email']) ?>" class="<?= isset($flashErrors['email']) ? 'error-border' : '' ?>">
-                <div class="field-error" id="error-email"><?= htmlspecialchars($flashErrors['email'] ?? '') ?></div>
+                <input type="email" name="email" id="email" value="<?= htmlspecialchars($formData['email']) ?>" required>
+                <div class="field-error" id="error-email"></div>
             </div>
-
             <div class="form-group">
                 <label>Телефон</label>
-                <input type="tel" name="phone" id="phone" value="<?= htmlspecialchars($formData['phone']) ?>" placeholder="+7XXXXXXXXXX" class="<?= isset($flashErrors['phone']) ? 'error-border' : '' ?>">
-                <div class="field-error" id="error-phone"><?= htmlspecialchars($flashErrors['phone'] ?? '') ?></div>
+                <input type="tel" name="phone" id="phone" value="<?= htmlspecialchars($formData['phone']) ?>" placeholder="+7XXXXXXXXXX" required>
+                <div class="field-error" id="error-phone"></div>
             </div>
-
             <div class="form-group checkbox">
                 <label>
-                    <input type="checkbox" name="consent" id="consent" value="1" <?= $formData['consent'] ? 'checked' : '' ?>>
+                    <input type="checkbox" name="consent" id="consent" value="1" <?= $formData['consent'] ? 'checked' : '' ?> required>
                     Согласие на обработку персональных данных
                 </label>
-                <div class="field-error" id="error-consent"><?= htmlspecialchars($flashErrors['consent'] ?? '') ?></div>
+                <div class="field-error" id="error-consent"></div>
             </div>
 
             <div class="form-group">
@@ -619,6 +572,7 @@ if (!empty($flashErrors)) {
             </div>
         <?php endif; ?>
     </section>
+
 
     <!-- Остальной footer -->
     <footer>
