@@ -8,7 +8,6 @@ class UserManager {
         $this->db = Database::getInstance()->getConnection();
     }
 
-    // Генерация уникального логина
     public function generateUniqueLogin() {
         do {
             $login = 'client_' . substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyz'), 0, 8);
@@ -18,13 +17,11 @@ class UserManager {
         return $login;
     }
 
-    // Генерация случайного пароля
-    public function generatePassword($length = 12) {
+    public function generatePassword($len = 12) {
         $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
-        return substr(str_shuffle($chars), 0, $length);
+        return substr(str_shuffle($chars), 0, $len);
     }
 
-    // Создание нового пользователя
     public function createUser($full_name, $email, $phone, $consent) {
         $login = $this->generateUniqueLogin();
         $plainPass = $this->generatePassword();
@@ -35,16 +32,13 @@ class UserManager {
             VALUES (?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([$full_name, $email, $phone, $consent ? 1 : 0, $login, $passHash]);
-        $userId = $this->db->lastInsertId();
-
         return [
-            'id' => $userId,
+            'id' => $this->db->lastInsertId(),
             'login' => $login,
             'password' => $plainPass
         ];
     }
 
-    // Проверка логина/пароля
     public function authenticate($login, $password) {
         $stmt = $this->db->prepare("SELECT id, login, password_hash FROM auto_users WHERE login = ?");
         $stmt->execute([$login]);
@@ -55,7 +49,6 @@ class UserManager {
         return false;
     }
 
-    // Получить пользователя по ID
     public function getUserById($id) {
         $stmt = $this->db->prepare("SELECT id, full_name, email, phone, consent, login FROM auto_users WHERE id = ?");
         $stmt->execute([$id]);

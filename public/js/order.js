@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
             total += parseFloat(cb.getAttribute('data-price') || 0);
         });
         document.getElementById('total-price').innerText = total.toLocaleString('ru-RU') + ' ₽';
+        document.getElementById('total_price_hidden').value = total;
     }
 
     document.getElementById('model_id').addEventListener('change', updateTotalPrice);
@@ -20,7 +21,11 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTotalPrice();
 
     form.addEventListener('submit', async function(e) {
-        e.preventDefault();
+        // Если мы используем AJAX – отменяем стандартную отправку
+        if (window.fetch) {
+            e.preventDefault();
+        }
+
         const data = {
             full_name: document.getElementById('full_name').value.trim(),
             email: document.getElementById('email').value.trim(),
@@ -31,27 +36,39 @@ document.addEventListener('DOMContentLoaded', function() {
             services: Array.from(document.querySelectorAll('input[name="services[]"]:checked')).map(cb => parseInt(cb.value)),
             total_price: parseFloat(document.getElementById('total-price').innerText.replace(/[^0-9.-]+/g, ''))
         };
+
+        // Проверка на пустые поля
         if (!data.full_name || !data.email || !data.phone || !data.consent) {
-            document.getElementById('form-message').innerHTML = '<div class="error-message">Заполните все поля</div>';
+            document.getElementById('form-message').innerHTML = '<div class="error-message">Заполните все обязательные поля</div>';
             document.getElementById('form-message').style.display = 'block';
             return;
         }
-        const isEdit = document.querySelector('#user-logged-indicator') !== null;
-        if (isEdit) data._method = 'PUT';
+
+        const isLoggedIn = document.getElementById('user-logged-indicator') !== null;
+        if (isLoggedIn) data._method = 'PUT';
+
         try {
-            const response = await fetch('/project/index.php', {
+            const response = await fetch('index.php', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
                 body: JSON.stringify(data)
             });
             const result = await response.json();
             if (response.ok) {
                 if (result.login && result.password) {
-                    document.getElementById('form-message').innerHTML = `<div class="success-message">Заказ создан!<br>Логин: ${result.login}<br>Пароль: ${result.password}</div>`;
+                    document.getElementById('form-message').innerHTML = `<div class="success-message">
+                        Заказ создан!<br>
+                        Логин: <strong>${result.login}</strong><br>
+                        Пароль: <strong>${result.password}</strong><br>
+                        <small>Сохраните эти данные для входа.</small>
+                    </div>`;
                     form.reset();
                     updateTotalPrice();
                 } else {
-                    document.getElementById('form-message').innerHTML = '<div class="success-message">Заказ обновлён!</div>';
+                    document.getElementById('form-message').innerHTML = '<div class="success-message">' + (result.message || 'Заказ обновлён') + '</div>';
                 }
             } else {
                 document.getElementById('form-message').innerHTML = `<div class="error-message">${result.error || 'Ошибка'}</div>`;

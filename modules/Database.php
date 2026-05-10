@@ -15,7 +15,7 @@ class Database {
             );
         } catch (PDOException $e) {
             error_log($e->getMessage());
-            die("Ошибка подключения к базе данных. Попробуйте позже.");
+            die("Ошибка подключения к БД. Попробуйте позже.");
         }
     }
 
