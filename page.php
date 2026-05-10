@@ -441,22 +441,7 @@ $formData = [
         <?php endif; ?>
     </section>
 
-            <div class="calculator-result">
-                <h3>Итоговая стоимость</h3>
-                <div class="total-price" id="total-price">0 ₽</div>
-            </div>
-
-            <button type="submit" class="btn"><?= $isLoggedIn ? 'Обновить заказ' : 'Оформить заказ' ?></button>
-            <div id="form-message" class="form-message" style="display:none;"></div>
-        </form>
-
-        <?php if ($isLoggedIn): ?>
-            <div class="logged-in-info">
-                Вы авторизованы как <?= htmlspecialchars($_SESSION['auto_user_login']) ?>
-                <a href="logout.php">Выйти</a>
-            </div>
-        <?php endif; ?>
-    </section>
+           
 
     <?php if (isset($_SESSION['flash'])): ?>
     <div class="container" style="margin-top:1rem;">
