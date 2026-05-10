@@ -61,12 +61,14 @@ if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 ], 201);
             } else sendJson(['error' => 'Failed to create order'], 500);
         } else {
+             $userMan->updateUser($userId, $full_name, $email, $phone, $consent);
             $orderId = $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
             if ($orderId) sendJson(['message' => 'Order created', 'order_id' => $orderId], 201);
             else sendJson(['error' => 'Failed to create order'], 500);
         }
     } else { // PUT
         if (!$userId) sendJson(['error' => 'Unauthorized'], 401);
+         $userMan->updateUser($userId, $full_name, $email, $phone, $consent);
         $lastOrder = $orderMan->getLastOrderByUser($userId);
         if (!$lastOrder) {
             // Нет заказа – создаём новый
@@ -109,6 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isAjax) {
             $_SESSION['flash'] = "Ошибка при создании заказа";
         }
     } else {
+        $userMan->updateUser($userId, $full_name, $email, $phone, $consent);
         $lastOrder = $orderMan->getLastOrderByUser($userId);
         if ($lastOrder) {
             $orderMan->updateOrder($lastOrder['id'], $modelId, $packageId, $serviceIds, $totalPrice);
@@ -154,7 +157,7 @@ unset($_SESSION['flash']);
 <head>
     <meta charset="UTF-8">
     <title>Mercedes-Benz – Заказ автомобиля</title>
-    <  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">  
     <link rel="stylesheet" href="blog.css">  
@@ -462,7 +465,7 @@ unset($_SESSION['flash']);
     
     
     </section>
-    <!-- ... (скопируйте из вашего index.html) ... -->
+    <!-- ...  ... -->
 
     <section class="order-section" id="order-form-section">
         <h2 style="text-align:center;">Оформить заказ</h2>

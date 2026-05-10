@@ -54,4 +54,16 @@ class UserManager {
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
+    // НОВЫЙ МЕТОД – обновление данных пользователя
+    public function updateUser($userId, $full_name, $email, $phone, $consent) {
+        $stmt = $this->db->prepare("
+            UPDATE auto_users 
+            SET full_name = ?, email = ?, phone = ?, consent = ?
+            WHERE id = ?
+        ");
+        return $stmt->execute([$full_name, $email, $phone, $consent ? 1 : 0, $userId]);
+    }
+
+
 }
