@@ -10,15 +10,11 @@ $orderMan = new OrderManager();
 
 // Определяем авторизацию
 $isLoggedIn = isset($_SESSION['auto_user_id']);
-$userData = null;
-$lastOrder = null;
-if ($isLoggedIn) {
-    $userData = $userMan->getUserById($_SESSION['auto_user_id']);
-    $lastOrder = $orderMan->getLastOrderByUser($_SESSION['auto_user_id']);
-}
+$userData = $isLoggedIn ? $userMan->getUserById($_SESSION['auto_user_id']) : null;
+$lastOrder = $isLoggedIn ? $orderMan->getLastOrderByUser($_SESSION['auto_user_id']) : null;
 
 // Получаем данные для выпадающих списков
-$carModel = new CarModels();
+
 $models = $carModel->getAllModels();
 $packages = $carModel->getAllPackages();
 $services = $carModel->getAllServices();
@@ -363,18 +359,13 @@ $formData = [
     
     </section>
 
-   <section id="contact">
+   <section id="order-form-section" class="order-form-section">
         <div class="section-title">
             <h2>Оформить заказ</h2>
+            <p>Заполните форму, и наш менеджер свяжется с вами</p>
         </div>
         
-        <?php if (isset($_SESSION['flash'])): ?>
-            <div class="success-message"><?= htmlspecialchars($_SESSION['flash']) ?></div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
-
-        <form id="order-form" method="post">
-            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>">
+        <form id="order-form" action="/project/index.php" method="post">
             <div class="form-group">
                 <label>ФИО</label>
                 <input type="text" name="full_name" id="full_name" value="<?= htmlspecialchars($formData['full_name']) ?>" required>
@@ -393,7 +384,7 @@ $formData = [
             <div class="form-group checkbox">
                 <label>
                     <input type="checkbox" name="consent" id="consent" value="1" <?= $formData['consent'] ? 'checked' : '' ?> required>
-                    Я даю согласие на обработку персональных данных
+                    Согласие на обработку персональных данных
                 </label>
                 <div class="field-error" id="error-consent"></div>
             </div>
@@ -402,7 +393,7 @@ $formData = [
                 <label>Модель</label>
                 <select name="model_id" id="model_id">
                     <?php foreach ($models as $m): ?>
-                        <option value="<?= $m['id'] ?>" data-price="<?= $m['base_price'] ?>" <?= $formData['model_id'] == $m['id'] ? 'selected' : '' ?>>
+                        <option value="<?= $m['id'] ?>" data-price="<?= $m['base_price'] ?>" <?= ($formData['model_id'] == $m['id']) ? 'selected' : '' ?>>
                             <?= htmlspecialchars($m['name']) ?> – <?= number_format($m['base_price'], 0, '', ' ') ?> ₽
                         </option>
                     <?php endforeach; ?>
@@ -414,7 +405,7 @@ $formData = [
                 <select name="package_id" id="package_id">
                     <option value="">Без пакета</option>
                     <?php foreach ($packages as $p): ?>
-                        <option value="<?= $p['id'] ?>" data-price="<?= $p['price_add'] ?>" <?= $formData['package_id'] == $p['id'] ? 'selected' : '' ?>>
+                        <option value="<?= $p['id'] ?>" data-price="<?= $p['price_add'] ?>" <?= ($formData['package_id'] == $p['id']) ? 'selected' : '' ?>>
                             <?= htmlspecialchars($p['name']) ?> (+<?= number_format($p['price_add'], 0, '', ' ') ?> ₽)
                         </option>
                     <?php endforeach; ?>
@@ -425,13 +416,30 @@ $formData = [
                 <label>Дополнительные услуги</label>
                 <div class="services-group">
                     <?php foreach ($services as $s): ?>
-                        <label class="service-check">
+                        <label>
                             <input type="checkbox" name="services[]" value="<?= $s['id'] ?>" data-price="<?= $s['price_add'] ?>" <?= in_array($s['id'], $formData['services']) ? 'checked' : '' ?>>
                             <?= htmlspecialchars($s['name']) ?> (+<?= number_format($s['price_add'], 0, '', ' ') ?> ₽)
                         </label>
                     <?php endforeach; ?>
                 </div>
             </div>
+
+            <div class="calculator-result">
+                <h3>Итоговая стоимость</h3>
+                <div class="total-price" id="total-price">0 ₽</div>
+            </div>
+
+            <button type="submit" class="btn"><?= $isLoggedIn ? 'Обновить заказ' : 'Оформить заказ' ?></button>
+            <div id="form-message" class="form-message" style="display:none;"></div>
+        </form>
+
+        <?php if ($isLoggedIn): ?>
+            <div style="text-align:center; margin-top:1rem;">
+                Вы авторизованы как <?= htmlspecialchars($_SESSION['auto_user_login']) ?>
+                <a href="logout.php">Выйти</a>
+            </div>
+        <?php endif; ?>
+    </section>
 
             <div class="calculator-result">
                 <h3>Итоговая стоимость</h3>
