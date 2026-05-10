@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Функция отправки через fetch
     async function submitOrder(formDataObj, isEdit = false) {
         const method = isEdit ? 'PUT' : 'POST';
-        const response = await fetch('/api/order', {
+        const response = await fetch('/order_api.php', {
             method: method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formDataObj)
