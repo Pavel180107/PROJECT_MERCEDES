@@ -233,7 +233,7 @@ unset($_SESSION['flash']);
         </div>
         
         <nav>
-            <a href="#" class="logo">Mercedes<span>Elite</span></a>
+          <a href="panel.php" class="logo">Mercedes<span>Elite</span></a>
             <ul class="nav-links">
                 <li><a href="#">Главная</a></li>
                 <li>
