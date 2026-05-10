@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('form-message').style.display = 'block';
             return;
         }
-        const isEdit = document.getElementById('user-logged-indicator') !== null;
-        const method = isEdit ? 'PUT' : 'POST';
+        const isEdit = document.querySelector('#user-logged-indicator') !== null;
+        if (isEdit) data._method = 'PUT';
         try {
             const response = await fetch('/project/index.php', {
-                method: method,
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                 body: JSON.stringify(data)
             });

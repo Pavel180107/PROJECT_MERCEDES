@@ -1,8 +1,7 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-// index.php – единая точка входа (ИСПРАВЛЕННАЯ ВЕРСИЯ)
+// index.php – единая точка входа (эмуляция PUT через _method)
 session_start();
+
 require_once 'config.php';
 require_once 'modules/Database.php';
 require_once 'modules/CarModels.php';
@@ -10,7 +9,7 @@ require_once 'modules/UserManager.php';
 require_once 'modules/OrderManager.php';
 
 error_reporting(E_ALL);
-ini_set('display_errors', 1);   // выводим ошибки на экран для диагностики
+ini_set('display_errors', 1);
 
 function sendJson($data, $code = 200) {
     http_response_code($code);
@@ -19,14 +18,21 @@ function sendJson($data, $code = 200) {
     exit;
 }
 
+// Проверяем, AJAX ли запрос
 $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
-if ($isAjax && ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHOD'] === 'PUT')) {
+if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
     if (!$input) sendJson(['error' => 'Invalid JSON'], 400);
 
-    $method = $_SERVER['REQUEST_METHOD'];
+    // Эмуляция PUT через поле _method
+    $realMethod = 'POST';
+    if (isset($input['_method']) && $input['_method'] === 'PUT') {
+        $realMethod = 'PUT';
+    }
+
+    // Валидация обязательных полей
     $required = ['full_name', 'email', 'phone', 'consent', 'model_id', 'package_id', 'services', 'total_price'];
     foreach ($required as $field) {
         if (!isset($input[$field])) sendJson(['error' => "Missing field: $field"], 422);
@@ -45,9 +51,10 @@ if ($isAjax && ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHO
     $orderMan = new OrderManager();
     $userId = $_SESSION['auto_user_id'] ?? null;
 
-    if ($method === 'POST') {
-        // ... POST код (оставляем без изменений)
+    if ($realMethod === 'POST') {
+        // СОЗДАНИЕ НОВОГО ЗАКАЗА
         if (!$userId) {
+            // Неавторизован – создаём пользователя
             $newUser = $userMan->createUser($full_name, $email, $phone, $consent);
             if (!$newUser) sendJson(['error' => 'Failed to create user'], 500);
             $userId = $newUser['id'];
@@ -61,34 +68,39 @@ if ($isAjax && ($_SERVER['REQUEST_METHOD'] === 'POST' || $_SERVER['REQUEST_METHO
                     'login' => $newUser['login'],
                     'password' => $newUser['password']
                 ], 201);
-            } else sendJson(['error' => 'Failed to create order'], 500);
+            } else {
+                sendJson(['error' => 'Failed to create order'], 500);
+            }
         } else {
+            // Авторизован – просто создаём заказ
             $orderId = $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
-            if ($orderId) sendJson(['message' => 'Order created', 'order_id' => $orderId], 201);
-            else sendJson(['error' => 'Failed to create order'], 500);
+            if ($orderId) {
+                sendJson(['message' => 'Order created', 'order_id' => $orderId], 201);
+            } else {
+                sendJson(['error' => 'Failed to create order'], 500);
+            }
         }
     } 
-    elseif ($method === 'PUT') {
-        // ============= ИСПРАВЛЕННАЯ ЧАСТЬ PUT =============
+    elseif ($realMethod === 'PUT') {
+        // ОБНОВЛЕНИЕ СУЩЕСТВУЮЩЕГО ЗАКАЗА
         if (!$userId) sendJson(['error' => 'Unauthorized'], 401);
-        
-        // Получаем последний заказ пользователя
         $lastOrder = $orderMan->getLastOrderByUser($userId);
         if (!$lastOrder) {
-            // Если нет заказа, создаём новый (как при POST)
+            // Если заказа нет – создаём новый (как при POST)
             $orderId = $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
-            if ($orderId) sendJson(['message' => 'Order created (no existing)', 'order_id' => $orderId], 201);
-            else sendJson(['error' => 'Failed to create order'], 500);
-        }
-        
-        // Обновляем найденный заказ
-        $updated = $orderMan->updateOrder($lastOrder['id'], $modelId, $packageId, $serviceIds, $totalPrice);
-        if ($updated) {
-            sendJson(['message' => 'Order updated'], 200);
+            if ($orderId) {
+                sendJson(['message' => 'Order created (no existing)', 'order_id' => $orderId], 201);
+            } else {
+                sendJson(['error' => 'Failed to create order'], 500);
+            }
         } else {
-            // Дополнительная диагностика
-            $errorMsg = 'Failed to update order – check OrderManager::updateOrder';
-            sendJson(['error' => $errorMsg], 500);
+            // Обновляем существующий заказ
+            $updated = $orderMan->updateOrder($lastOrder['id'], $modelId, $packageId, $serviceIds, $totalPrice);
+            if ($updated) {
+                sendJson(['message' => 'Order updated'], 200);
+            } else {
+                sendJson(['error' => 'Failed to update order'], 500);
+            }
         }
     }
     exit;
