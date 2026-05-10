@@ -41,7 +41,7 @@ foreach ($required as $field) {
             exit;
         } else {
             $_SESSION['flash'] = "Ошибка: не заполнено поле $field";
-            header('Location: /');
+            header('Location: index.php');
             exit;
         }
     }
@@ -83,7 +83,7 @@ try {
                 exit;
             } else {
                 $_SESSION['flash'] = 'Заказ не найден';
-                header('Location: /');
+                header('Location: index.php');
                 exit;
             }
         }
@@ -93,7 +93,7 @@ try {
             exit;
         } else {
             $_SESSION['flash'] = 'Заказ обновлён';
-            header('Location: /');
+            header('Location: index.php');
             exit;
         }
     } else {
@@ -118,7 +118,7 @@ try {
                 exit;
             } else {
                 $_SESSION['flash'] = "Заказ создан! Ваш логин: {$newUser['login']}, пароль: {$newUser['password']}";
-                header('Location: /');
+                header('Location: index.php');
                 exit;
             }
         } else {
@@ -129,7 +129,7 @@ try {
                 exit;
             } else {
                 $_SESSION['flash'] = 'Заказ создан';
-                header('Location: /');
+                header('Location: index.php');
                 exit;
             }
         }
@@ -141,7 +141,7 @@ try {
         exit;
     } else {
         $_SESSION['flash'] = 'Ошибка: ' . $e->getMessage();
-        header('Location: /');
+        header('Location: index.php');
         exit;
     }
 }

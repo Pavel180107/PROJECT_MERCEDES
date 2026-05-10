@@ -3,7 +3,7 @@ require_once 'config.php';
 require_once 'modules/UserManager.php';
 
 if (isset($_SESSION['auto_user_id'])) {
-    header('Location: /');
+    header('Location: index.php');
     exit;
 }
 
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($userId) {
         $_SESSION['auto_user_id'] = $userId;
         $_SESSION['auto_user_login'] = $login;
-        header('Location: /');
+        header('Location: index.php');
         exit;
     } else {
         $error = 'Неверный логин или пароль';
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="btn">Войти</button>
     </form>
     <div class="back-link">
-        <a href="/">← Вернуться на главную</a>
+        <a href="index.php">← Вернуться на главную</a>
     </div>
 </div>
 </body>
