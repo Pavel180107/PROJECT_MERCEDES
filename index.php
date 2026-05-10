@@ -1,5 +1,5 @@
 <?php
-// index.php – единая точка входа (эмуляция PUT через _method)
+// index.php – единая точка входа (исправленная версия)
 session_start();
 
 require_once 'config.php';
@@ -18,7 +18,6 @@ function sendJson($data, $code = 200) {
     exit;
 }
 
-// Проверяем, AJAX ли запрос
 $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
@@ -32,8 +31,8 @@ if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
         $realMethod = 'PUT';
     }
 
-    // Валидация обязательных полей
-    $required = ['full_name', 'email', 'phone', 'consent', 'model_id', 'package_id', 'services', 'total_price'];
+    // Обязательные поля (package_id НЕ входит в список!)
+    $required = ['full_name', 'email', 'phone', 'consent', 'model_id', 'services', 'total_price'];
     foreach ($required as $field) {
         if (!isset($input[$field])) sendJson(['error' => "Missing field: $field"], 422);
     }
@@ -43,7 +42,9 @@ if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = trim($input['phone']);
     $consent = (bool)$input['consent'];
     $modelId = (int)$input['model_id'];
-    $packageId = !empty($input['package_id']) ? (int)$input['package_id'] : null;
+    // package_id может отсутствовать или быть пустым – тогда null
+    $packageId = isset($input['package_id']) && $input['package_id'] !== '' && $input['package_id'] !== null
+                 ? (int)$input['package_id'] : null;
     $serviceIds = array_map('intval', $input['services']);
     $totalPrice = (float)$input['total_price'];
 
@@ -54,7 +55,6 @@ if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($realMethod === 'POST') {
         // СОЗДАНИЕ НОВОГО ЗАКАЗА
         if (!$userId) {
-            // Неавторизован – создаём пользователя
             $newUser = $userMan->createUser($full_name, $email, $phone, $consent);
             if (!$newUser) sendJson(['error' => 'Failed to create user'], 500);
             $userId = $newUser['id'];
@@ -72,21 +72,17 @@ if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 sendJson(['error' => 'Failed to create order'], 500);
             }
         } else {
-            // Авторизован – просто создаём заказ
             $orderId = $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
-            if ($orderId) {
-                sendJson(['message' => 'Order created', 'order_id' => $orderId], 201);
-            } else {
-                sendJson(['error' => 'Failed to create order'], 500);
-            }
+            if ($orderId) sendJson(['message' => 'Order created', 'order_id' => $orderId], 201);
+            else sendJson(['error' => 'Failed to create order'], 500);
         }
     } 
     elseif ($realMethod === 'PUT') {
-        // ОБНОВЛЕНИЕ СУЩЕСТВУЮЩЕГО ЗАКАЗА
+        // ОБНОВЛЕНИЕ
         if (!$userId) sendJson(['error' => 'Unauthorized'], 401);
         $lastOrder = $orderMan->getLastOrderByUser($userId);
         if (!$lastOrder) {
-            // Если заказа нет – создаём новый (как при POST)
+            // Если нет заказа – создаём новый
             $orderId = $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
             if ($orderId) {
                 sendJson(['message' => 'Order created (no existing)', 'order_id' => $orderId], 201);
@@ -94,7 +90,6 @@ if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 sendJson(['error' => 'Failed to create order'], 500);
             }
         } else {
-            // Обновляем существующий заказ
             $updated = $orderMan->updateOrder($lastOrder['id'], $modelId, $packageId, $serviceIds, $totalPrice);
             if ($updated) {
                 sendJson(['message' => 'Order updated'], 200);
