@@ -13,6 +13,43 @@ function sendJson($data, $code = 200) {
     exit;
 }
 
+
+// Функция валидации полей (возвращает массив ошибок)
+function validateFields($full_name, $email, $phone, $consent) {
+    $errors = [];
+    // ФИО: только буквы (русские/лат), пробелы, дефис
+    if (empty($full_name)) {
+        $errors['full_name'] = 'ФИО обязательно для заполнения.';
+    } elseif (!preg_match('/^[a-zA-Zа-яА-ЯёЁ\s\-]+$/u', $full_name)) {
+        $errors['full_name'] = 'ФИО должно содержать только буквы (русские или латинские), пробелы и дефис. Пример: Иванов Иван Иванович или Ivanov Ivan.';
+    } elseif (strlen($full_name) > 150) {
+        $errors['full_name'] = 'ФИО не должно превышать 150 символов.';
+    }
+
+    // Email
+    if (empty($email)) {
+        $errors['email'] = 'Email обязателен для заполнения.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = 'Введите корректный email, например: name@example.com.';
+    }
+
+    // Телефон
+    if (empty($phone)) {
+        $errors['phone'] = 'Телефон обязателен для заполнения.';
+    } elseif (!preg_match('/^[\d\s\-\+\(\)]{6,12}$/', $phone)) {
+        $errors['phone'] = 'Телефон должен содержать от 6 до 12 символов, разрешены цифры, +, -, (, ), пробел. Пример: +7 (912) 345-67-89.';
+    }
+
+    // Согласие
+    if (!$consent) {
+        $errors['consent'] = 'Необходимо подтвердить согласие на обработку персональных данных.';
+    }
+
+    return $errors;
+}
+
+
+
 // Определяем, AJAX ли запрос
 $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
@@ -30,18 +67,14 @@ if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!isset($input[$field])) sendJson(['error' => "Missing field: $field"], 422);
     }
 
-    $full_name = trim($input['full_name']);
-    $email = trim($input['email']);
-    $phone = trim($input['phone']);
-    $consent = (bool)$input['consent'];
-    $modelId = (int)$input['model_id'];
+    $full_name = trim($input['full_name'] ?? '');
+    $email = trim($input['email'] ?? '');
+    $phone = trim($input['phone'] ?? '');
+    $consent = (bool)($input['consent'] ?? false);
+    $modelId = (int)($input['model_id'] ?? 0);
     $packageId = isset($input['package_id']) && $input['package_id'] !== '' ? (int)$input['package_id'] : null;
-    $serviceIds = array_map('intval', $input['services']);
-    $totalPrice = (float)$input['total_price'];
-
-    $userMan = new UserManager();
-    $orderMan = new OrderManager();
-    $userId = $_SESSION['auto_user_id'] ?? null;
+    $serviceIds = array_map('intval', $input['services'] ?? []);
+    $totalPrice = (float)($input['total_price'] ?? 0);
 
     if ($method === 'POST') {
         // Создание заказа
@@ -95,6 +128,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isAjax) {
     $packageId = !empty($_POST['package_id']) ? (int)$_POST['package_id'] : null;
     $serviceIds = isset($_POST['services']) ? array_map('intval', $_POST['services']) : [];
     $totalPrice = (float)($_POST['total_price'] ?? 0);
+
+
+  $validationErrors = validateFields($full_name, $email, $phone, $consent);
+    if (!empty($validationErrors)) {
+        // Перенаправляем обратно с ошибками в сессии
+        $_SESSION['flash_errors'] = $validationErrors;
+        $_SESSION['old_input'] = $_POST;
+        header('Location: index.php');
+        exit;
+    }
+
+
 
     $userMan = new UserManager();
     $orderMan = new OrderManager();
@@ -151,6 +196,20 @@ $formData = [
 
 $flash = $_SESSION['flash'] ?? '';
 unset($_SESSION['flash']);
+
+$flashErrors = $_SESSION['flash_errors'] ?? [];
+unset($_SESSION['flash_errors']);
+$oldInput = $_SESSION['old_input'] ?? [];
+unset($_SESSION['old_input']);
+
+// Если есть ошибки из fallback, подставляем старые значения
+if (!empty($flashErrors)) {
+    $formData['full_name'] = $oldInput['full_name'] ?? $formData['full_name'];
+    $formData['email'] = $oldInput['email'] ?? $formData['email'];
+    $formData['phone'] = $oldInput['phone'] ?? $formData['phone'];
+    $formData['consent'] = isset($oldInput['consent']);
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -198,6 +257,9 @@ unset($_SESSION['flash']);
         }
         .success-message { background: #2e7d32; color: white; }
         .error-message { background: #c62828; color: white; }
+         .error-border {
+            border: 1px solid #ff8a80 !important;
+        }
         .field-error { color: #ff8a80; font-size: 0.8rem; margin-top: 0.3rem; }
     </style>
 </head>
@@ -474,29 +536,35 @@ unset($_SESSION['flash']);
         <?php if ($flash): ?>
             <div class="success-message"><?= htmlspecialchars($flash) ?></div>
         <?php endif; ?>
+        <?php if (!empty($flashErrors)): ?>
+            <div class="error-message">Исправьте ошибки в форме:</div>
+        <?php endif; ?>
 
         <form id="order-form" action="index.php" method="post">
             <div class="form-group">
                 <label>ФИО</label>
-                <input type="text" name="full_name" id="full_name" value="<?= htmlspecialchars($formData['full_name']) ?>" required>
-                <div class="field-error" id="error-full_name"></div>
+                <input type="text" name="full_name" id="full_name" value="<?= htmlspecialchars($formData['full_name']) ?>" class="<?= isset($flashErrors['full_name']) ? 'error-border' : '' ?>">
+                <div class="field-error" id="error-full_name"><?= htmlspecialchars($flashErrors['full_name'] ?? '') ?></div>
             </div>
+
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" name="email" id="email" value="<?= htmlspecialchars($formData['email']) ?>" required>
-                <div class="field-error" id="error-email"></div>
+                <input type="email" name="email" id="email" value="<?= htmlspecialchars($formData['email']) ?>" class="<?= isset($flashErrors['email']) ? 'error-border' : '' ?>">
+                <div class="field-error" id="error-email"><?= htmlspecialchars($flashErrors['email'] ?? '') ?></div>
             </div>
+
             <div class="form-group">
                 <label>Телефон</label>
-                <input type="tel" name="phone" id="phone" value="<?= htmlspecialchars($formData['phone']) ?>" placeholder="+7XXXXXXXXXX" required>
-                <div class="field-error" id="error-phone"></div>
+                <input type="tel" name="phone" id="phone" value="<?= htmlspecialchars($formData['phone']) ?>" placeholder="+7XXXXXXXXXX" class="<?= isset($flashErrors['phone']) ? 'error-border' : '' ?>">
+                <div class="field-error" id="error-phone"><?= htmlspecialchars($flashErrors['phone'] ?? '') ?></div>
             </div>
+
             <div class="form-group checkbox">
                 <label>
-                    <input type="checkbox" name="consent" id="consent" value="1" <?= $formData['consent'] ? 'checked' : '' ?> required>
+                    <input type="checkbox" name="consent" id="consent" value="1" <?= $formData['consent'] ? 'checked' : '' ?>>
                     Согласие на обработку персональных данных
                 </label>
-                <div class="field-error" id="error-consent"></div>
+                <div class="field-error" id="error-consent"><?= htmlspecialchars($flashErrors['consent'] ?? '') ?></div>
             </div>
 
             <div class="form-group">
