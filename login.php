@@ -1,26 +1,27 @@
 <?php
 session_start();
 require_once 'config.php';
-require_once 'modules/Database.php';
 require_once 'modules/UserManager.php';
 
 if (isset($_SESSION['auto_user_id'])) {
-    header('Location: index.php');
+    $redirect = $_GET['redirect'] ?? 'profile';
+    header('Location: ' . ($redirect === 'profile' ? 'profile.php' : 'index.php'));
     exit;
 }
 
 $error = '';
 $loginInput = '';
+$redirect = isset($_GET['redirect']) ? $_GET['redirect'] : 'index';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $loginInput = trim($_POST['login'] ?? '');
-    $password = $_POST['password'] ?? '';
+    $loginInput = trim($_POST['login']);
+    $password = $_POST['password'];
     $userMan = new UserManager();
     $userId = $userMan->authenticate($loginInput, $password);
     if ($userId) {
         $_SESSION['auto_user_id'] = $userId;
         $_SESSION['auto_user_login'] = $loginInput;
-        header('Location: index.php');
+        header('Location: ' . ($_POST['redirect'] ?? 'profile.php'));
         exit;
     } else {
         $error = 'Неверный логин или пароль';

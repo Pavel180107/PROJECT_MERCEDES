@@ -9,21 +9,18 @@ require_once 'modules/OrderManager.php';
 function sendJson($data, $code = 200) {
     http_response_code($code);
     header('Content-Type: application/json');
-    echo json_encode($data);
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit;
 }
-
 
 $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
 
-// Обработка AJAX
 if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode(file_get_contents('php://input'), true);
     if (!$input) sendJson(['error' => 'Invalid JSON'], 400);
 
     $method = isset($input['_method']) && $input['_method'] === 'PUT' ? 'PUT' : 'POST';
-
     $required = ['full_name', 'email', 'phone', 'consent', 'model_id', 'services', 'total_price'];
     foreach ($required as $field) {
         if (!isset($input[$field])) sendJson(['error' => "Missing field: $field"], 422);
@@ -43,8 +40,12 @@ if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $userId = $_SESSION['auto_user_id'] ?? null;
 
     if ($method === 'POST') {
-        // СОЗДАНИЕ НОВОГО ЗАКАЗА
         if (!$userId) {
+            // Проверяем существование пользователя по email или телефону
+            $existing = $userMan->findUserByEmailOrPhone($email, $phone);
+            if ($existing) {
+                sendJson(['existing_user' => true, 'message' => 'У вас уже есть заказы. Пожалуйста, авторизуйтесь.'], 409);
+            }
             $newUser = $userMan->createUser($full_name, $email, $phone, $consent);
             if (!$newUser['success']) {
                 sendJson(['errors' => $newUser['errors']], 422);
@@ -58,17 +59,14 @@ if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
                     'message' => 'Order created',
                     'order_id' => $orderId,
                     'login' => $newUser['login'],
-                    'password' => $newUser['password']
+                    'password' => $newUser['password'],
+                    'first_time' => true
                 ], 201);
             } else {
                 sendJson(['error' => 'Failed to create order'], 500);
             }
         } else {
-            // Обновляем данные пользователя
-            $update = $userMan->updateUser($userId, $full_name, $email, $phone, $consent);
-            if (!$update['success']) {
-                sendJson(['errors' => $update['errors']], 422);
-            }
+            // Авторизован – создаём заказ (пользователь уже существует)
             $orderId = $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
             if ($orderId) {
                 sendJson(['message' => 'Order created', 'order_id' => $orderId], 201);
@@ -76,13 +74,10 @@ if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 sendJson(['error' => 'Failed to create order'], 500);
             }
         }
-    } else { // PUT (обновление)
+    } else { // PUT – обновление (только для авторизованных)
         if (!$userId) sendJson(['error' => 'Unauthorized'], 401);
-        // Обновляем данные пользователя
         $update = $userMan->updateUser($userId, $full_name, $email, $phone, $consent);
-        if (!$update['success']) {
-            sendJson(['errors' => $update['errors']], 422);
-        }
+        if (!$update['success']) sendJson(['errors' => $update['errors']], 422);
         $lastOrder = $orderMan->getLastOrderByUser($userId);
         if (!$lastOrder) {
             $orderId = $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
@@ -96,7 +91,7 @@ if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fallback для отключённого JS (без AJAX)
+// Fallback для отключённого JS
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isAjax) {
     $full_name = trim($_POST['full_name'] ?? '');
     $email = trim($_POST['email'] ?? '');
@@ -112,6 +107,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isAjax) {
     $userId = $_SESSION['auto_user_id'] ?? null;
 
     if (!$userId) {
+        $existing = $userMan->findUserByEmailOrPhone($email, $phone);
+        if ($existing) {
+            $_SESSION['flash'] = 'У вас уже есть заказы. Пожалуйста, авторизуйтесь.';
+            header('Location: login.php');
+            exit;
+        }
         $newUser = $userMan->createUser($full_name, $email, $phone, $consent);
         if (!$newUser['success']) {
             $_SESSION['flash'] = 'Ошибка: ' . implode(', ', $newUser['errors']);
@@ -122,27 +123,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isAjax) {
         $_SESSION['auto_user_login'] = $newUser['login'];
         $orderMan->createOrder($newUser['id'], $modelId, $packageId, $serviceIds, $totalPrice);
         $_SESSION['flash'] = "Заказ создан! Ваш логин: {$newUser['login']}, пароль: {$newUser['password']}";
+        header('Location: index.php');
+        exit;
     } else {
-        $update = $userMan->updateUser($userId, $full_name, $email, $phone, $consent);
-        if (!$update['success']) {
-            $_SESSION['flash'] = 'Ошибка: ' . implode(', ', $update['errors']);
-            header('Location: index.php');
-            exit;
-        }
-        $lastOrder = $orderMan->getLastOrderByUser($userId);
-        if ($lastOrder) {
-            $orderMan->updateOrder($lastOrder['id'], $modelId, $packageId, $serviceIds, $totalPrice);
-            $_SESSION['flash'] = 'Заказ обновлён';
-        } else {
-            $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
-            $_SESSION['flash'] = 'Заказ создан';
-        }
+        $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
+        $_SESSION['flash'] = 'Новый заказ создан.';
+        header('Location: index.php');
+        exit;
     }
-    header('Location: index.php');
-    exit;
 }
 
-// ====================== GET (отображение страницы) ======================
+// ====================== GET (отображение) ======================
 $carModel = new CarModels();
 $userMan = new UserManager();
 $orderMan = new OrderManager();
@@ -168,7 +159,7 @@ $formData = [
 
 $flash = $_SESSION['flash'] ?? '';
 unset($_SESSION['flash']);
-
+$showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'] == 1;
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -248,7 +239,12 @@ unset($_SESSION['flash']);
                 <li><a href="#calculator">Калькулятор</a></li>
                 <li><a href="#gallery">Галерея</a></li>
                 <li><a href="#contact">Заказать</a></li>
-                <li><a href="#" id="order-modal-btn" class="btn">Заказать авто</a></li>
+                 <li><a href="#order-form-section">Заказать</a></li>
+                <?php if ($isLoggedIn): ?>
+                    <li><a href="profile.php" class="btn">Личный профиль</a></li>
+                <?php else: ?>
+                    <li><a href="login.php" class="btn">Войти</a></li>
+                <?php endif; ?>
             </ul>
             <div class="burger">
                 <div></div>
@@ -492,7 +488,15 @@ unset($_SESSION['flash']);
         <h2 style="text-align:center;">Оформить заказ</h2>
         <p style="text-align:center;">Заполните форму, и менеджер свяжется с вами</p>
 
-        <?php if ($flash): ?>
+        <?php if ($isLoggedIn): ?>
+            <div class="auth-success">
+                Вы авторизованы как <?= htmlspecialchars($_SESSION['auto_user_login']) ?>. 
+                <a href="profile.php" style="color:#00A0E3;">Перейти в профиль</a> или 
+                <a href="logout.php" style="color:#ff8a80;">Выйти</a>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($flash && !$isLoggedIn): ?>
             <div class="success-message"><?= htmlspecialchars($flash) ?></div>
         <?php endif; ?>
 
@@ -545,7 +549,7 @@ unset($_SESSION['flash']);
 
             <div class="form-group">
                 <label>Дополнительные услуги</label>
-                <div class="services-group">
+                <div class="services-group" id="services_group">
                     <?php foreach ($services as $s): ?>
                         <label>
                             <input type="checkbox" name="services[]" value="<?= $s['id'] ?>" data-price="<?= $s['price_add'] ?>" <?= in_array($s['id'], $formData['services']) ? 'checked' : '' ?>>
@@ -561,16 +565,9 @@ unset($_SESSION['flash']);
             </div>
 
             <input type="hidden" name="total_price" id="total_price_hidden" value="<?= $formData['total_price'] ?>">
-            <button type="submit" class="btn"><?= $isLoggedIn ? 'Обновить заказ' : 'Оформить заказ' ?></button>
+            <button type="submit" class="btn"><?= $isLoggedIn ? 'Создать новый заказ' : 'Оформить заказ' ?></button>
             <div id="form-message" style="display:none;"></div>
         </form>
-
-        <?php if ($isLoggedIn): ?>
-            <div style="text-align:center; margin-top:1rem;" id="user-logged-indicator">
-                Вы авторизованы как <?= htmlspecialchars($_SESSION['auto_user_login']) ?>
-                <a href="logout.php">Выйти</a>
-            </div>
-        <?php endif; ?>
     </section>
 
 
@@ -601,5 +598,33 @@ unset($_SESSION['flash']);
     <script src="blog.js" defer></script>
     <script src="public/js/order.js" defer></script>
     
+
+<?php if ($showSuccessPopup && isset($_SESSION['temp_credentials'])): ?>
+        <div id="credentialsPopup" class="popup-overlay">
+            <div class="popup-content">
+                <h3>🎉 Регистрация успешна!</h3>
+                <p>Ваши данные для входа (сохраните их!):</p>
+                <div class="credentials">
+                    <strong>Логин:</strong> <?= htmlspecialchars($_SESSION['temp_credentials']['login']) ?><br>
+                    <strong>Пароль:</strong> <?= htmlspecialchars($_SESSION['temp_credentials']['password']) ?>
+                </div>
+                <p>Вы будете автоматически авторизованы после закрытия окна.</p>
+                <button id="closeCredentialsPopup">Я сохранил(а) логин и пароль</button>
+            </div>
+        </div>
+        <script>
+            document.getElementById('closeCredentialsPopup').onclick = function() {
+                // Спрашиваем подтверждение
+                if (confirm('Вы точно сохранили логин и пароль? Закрыть окно?')) {
+                    document.getElementById('credentialsPopup').remove();
+                    // Можно очистить temp_credentials из сессии через AJAX, но не обязательно
+                }
+            };
+        </script>
+        <?php unset($_SESSION['temp_credentials']); ?>
+    <?php endif; ?>
+
+
+
 </body>
 </html>

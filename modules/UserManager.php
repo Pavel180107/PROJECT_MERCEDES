@@ -10,50 +10,41 @@ class UserManager {
 
     // Валидация ФИО (только буквы, пробелы, дефис)
     public static function validateFullName($name) {
-        if (empty($name)) {
-            return 'ФИО обязательно для заполнения.';
-        }
-        if (!preg_match('/^[а-яА-ЯёЁa-zA-Z\s\-]+$/u', $name)) {
+        if (empty($name)) return 'ФИО обязательно для заполнения.';
+        if (!preg_match('/^[а-яА-ЯёЁa-zA-Z\s\-]+$/u', $name)) 
             return 'ФИО может содержать только буквы (русские или латинские), пробелы и дефис.';
-        }
-        if (strlen($name) > 150) {
-            return 'ФИО не должно превышать 150 символов.';
-        }
+        if (strlen($name) > 150) return 'ФИО не должно превышать 150 символов.';
         return null;
     }
 
-    // Валидация телефона
     public static function validatePhone($phone) {
-        if (empty($phone)) {
-            return 'Телефон обязателен.';
-        }
-        // Очистка от пробелов, скобок, дефисов, плюса
+        if (empty($phone)) return 'Телефон обязателен.';
         $clean = preg_replace('/[^\d+]/', '', $phone);
-        if (!preg_match('/^(\+7|8)?\d{10}$/', $clean)) {
+        if (!preg_match('/^(\+7|8)?\d{10}$/', $clean)) 
             return 'Телефон должен быть в формате +7XXXXXXXXXX или 8XXXXXXXXXX (10 цифр после кода).';
-        }
         return null;
     }
 
-    // Валидация email
     public static function validateEmail($email) {
-        if (empty($email)) {
-            return 'Email обязателен.';
-        }
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (empty($email)) return 'Email обязателен.';
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
             return 'Введите корректный email (например, name@example.com).';
-        }
         return null;
     }
 
-    // Валидация согласия
     public static function validateConsent($consent) {
-        if (!$consent) {
-            return 'Необходимо подтвердить согласие на обработку персональных данных.';
-        }
+        if (!$consent) return 'Необходимо подтвердить согласие на обработку персональных данных.';
         return null;
     }
 
+    // Проверка существования пользователя по email или телефону
+    public function findUserByEmailOrPhone($email, $phone) {
+        $stmt = $this->db->prepare("SELECT id, login FROM auto_users WHERE email = ? OR phone = ?");
+        $stmt->execute([$email, $phone]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Генерация уникального логина
     public function generateUniqueLogin() {
         do {
             $login = 'client_' . substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyz'), 0, 8);
@@ -68,16 +59,14 @@ class UserManager {
         return substr(str_shuffle($chars), 0, $len);
     }
 
-    // Создание пользователя с проверкой
+    // Создание нового пользователя (без проверки дублей – проверка должна быть вызвана отдельно)
     public function createUser($full_name, $email, $phone, $consent) {
         $errors = [];
         if ($err = self::validateFullName($full_name)) $errors['full_name'] = $err;
         if ($err = self::validateEmail($email)) $errors['email'] = $err;
         if ($err = self::validatePhone($phone)) $errors['phone'] = $err;
         if ($err = self::validateConsent($consent)) $errors['consent'] = $err;
-        if (!empty($errors)) {
-            return ['success' => false, 'errors' => $errors];
-        }
+        if (!empty($errors)) return ['success' => false, 'errors' => $errors];
 
         $login = $this->generateUniqueLogin();
         $plainPass = $this->generatePassword();
@@ -96,16 +85,14 @@ class UserManager {
         ];
     }
 
-    // Обновление пользователя с проверкой
+    // Обновление пользователя
     public function updateUser($userId, $full_name, $email, $phone, $consent) {
         $errors = [];
         if ($err = self::validateFullName($full_name)) $errors['full_name'] = $err;
         if ($err = self::validateEmail($email)) $errors['email'] = $err;
         if ($err = self::validatePhone($phone)) $errors['phone'] = $err;
         if ($err = self::validateConsent($consent)) $errors['consent'] = $err;
-        if (!empty($errors)) {
-            return ['success' => false, 'errors' => $errors];
-        }
+        if (!empty($errors)) return ['success' => false, 'errors' => $errors];
 
         $stmt = $this->db->prepare("
             UPDATE auto_users 

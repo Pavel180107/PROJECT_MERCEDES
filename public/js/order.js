@@ -21,9 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     updateTotalPrice();
 
     form.addEventListener('submit', async function(e) {
-        if (window.fetch) {
-            e.preventDefault();
-        }
+        if (window.fetch) e.preventDefault();
 
         const data = {
             full_name: document.getElementById('full_name').value.trim(),
@@ -36,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
             total_price: parseFloat(document.getElementById('total-price').innerText.replace(/[^0-9.-]+/g, ''))
         };
 
-        // Очищаем предыдущие ошибки
         document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
         document.getElementById('form-message').style.display = 'none';
 
@@ -54,25 +51,29 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             const result = await response.json();
             if (response.ok) {
-                if (result.login && result.password) {
-                    document.getElementById('form-message').innerHTML = `<div class="success-message">
-                        Заказ создан!<br>
-                        Логин: <strong>${result.login}</strong><br>
-                        Пароль: <strong>${result.password}</strong><br>
-                        <small>Сохраните эти данные для входа.</small>
-                    </div>`;
+                if (result.first_time) {
+                    // Показываем модальное окно с логином/паролем
+                    showCredentialsPopup(result.login, result.password);
+                    location.reload(); // перезагружаем страницу, чтобы форма заменилась на авторизованную секцию
+                } else if (result.message === 'Order updated') {
+                    document.getElementById('form-message').innerHTML = '<div class="success-message">Заказ обновлён!</div>';
+                    document.getElementById('form-message').style.display = 'block';
+                } else {
+                    document.getElementById('form-message').innerHTML = '<div class="success-message">Новый заказ создан!</div>';
+                    document.getElementById('form-message').style.display = 'block';
                     form.reset();
                     updateTotalPrice();
-                } else {
-                    document.getElementById('form-message').innerHTML = '<div class="success-message">' + (result.message || 'Заказ обновлён!') + '</div>';
                 }
-                document.getElementById('form-message').style.display = 'block';
             } else {
-                if (result.errors) {
-                    // Показываем ошибки под каждым полем
-                    for (const [field, message] of Object.entries(result.errors)) {
-                        const errorSpan = document.getElementById(`error-${field}`);
-                        if (errorSpan) errorSpan.textContent = message;
+                if (result.existing_user) {
+                    // Пользователь уже существует – показываем предложение авторизоваться
+                    if (confirm(result.message + '\nПерейти к авторизации?')) {
+                        window.location.href = 'login.php?redirect=profile';
+                    }
+                } else if (result.errors) {
+                    for (const [field, msg] of Object.entries(result.errors)) {
+                        const errSpan = document.getElementById(`error-${field}`);
+                        if (errSpan) errSpan.textContent = msg;
                     }
                     document.getElementById('form-message').innerHTML = '<div class="error-message">Пожалуйста, исправьте ошибки в форме.</div>';
                 } else {
@@ -86,4 +87,29 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error(err);
         }
     });
+
+    function showCredentialsPopup(login, password) {
+        // Создаём модальное окно
+        const overlay = document.createElement('div');
+        overlay.className = 'popup-overlay';
+        overlay.innerHTML = `
+            <div class="popup-content">
+                <h3>🎉 Регистрация успешна!</h3>
+                <p>Ваши данные для входа (сохраните их!):</p>
+                <div class="credentials">
+                    <strong>Логин:</strong> ${login}<br>
+                    <strong>Пароль:</strong> ${password}
+                </div>
+                <p>Вы будете автоматически авторизованы после закрытия окна.</p>
+                <button id="closeCredPopup">Я сохранил(а) логин и пароль</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+        const closeBtn = overlay.querySelector('#closeCredPopup');
+        closeBtn.onclick = () => {
+            if (confirm('Вы точно сохранили логин и пароль? Закрыть окно?')) {
+                overlay.remove();
+            }
+        };
+    }
 });
