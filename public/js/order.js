@@ -50,14 +50,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify(data)
             });
             const result = await response.json();
-
-
-
-
-            
-          if (response.ok) {
+            if (response.ok) {
                 if (result.first_time) {
-                    // Показываем окно с логином/паролем, перезагрузка после закрытия
+                    // Показываем popup с логином/паролем, НЕ перезагружаем страницу сразу
                     showCredentialsPopup(result.login, result.password);
                 } else if (result.message === 'Order updated') {
                     document.getElementById('form-message').innerHTML = '<div class="success-message">Заказ обновлён!</div>';
@@ -70,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             } else {
                 if (result.existing_user) {
-                    // Пользователь уже существует – показываем предложение авторизоваться
                     if (confirm(result.message + '\nПерейти к авторизации?')) {
                         window.location.href = 'login.php?redirect=profile';
                     }
@@ -93,39 +87,51 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function showCredentialsPopup(login, password) {
-    const overlay = document.createElement('div');
-    overlay.className = 'popup-overlay';
-    overlay.innerHTML = `
-        <div class="popup-content">
-            <h3>🎉 Регистрация успешна!</h3>
-            <p>Ваши данные для входа (сохраните их!):</p>
-            <div class="credentials">
-                <strong>Логин:</strong> ${escapeHtml(login)}<br>
-                <strong>Пароль:</strong> ${escapeHtml(password)}
+        // Создаём затемнённый фон
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0,0,0,0.9)';
+        overlay.style.backdropFilter = 'blur(5px)';
+        overlay.style.zIndex = '10000';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        
+        // Содержимое окна
+        overlay.innerHTML = `
+            <div style="background: #1a1a1a; border-radius: 20px; padding: 2rem; max-width: 500px; text-align: center; border: 2px solid #00A0E3; box-shadow: 0 0 30px rgba(0,160,227,0.5);">
+                <h3 style="color: #00A0E3; margin-bottom: 1rem;">🎉 Регистрация успешна!</h3>
+                <p>Ваши данные для входа (сохраните их!):</p>
+                <div style="background: #0d0d0d; padding: 1rem; border-radius: 12px; font-family: monospace; margin: 1rem 0;">
+                    <strong>Логин:</strong> ${escapeHtml(login)}<br>
+                    <strong>Пароль:</strong> ${escapeHtml(password)}
+                </div>
+                <p>Вы будете автоматически авторизованы после закрытия окна.</p>
+                <button id="closeCredPopup" style="background: #00A0E3; border: none; padding: 0.8rem 2rem; border-radius: 30px; color: white; cursor: pointer; margin-top: 1rem;">Я сохранил(а) логин и пароль</button>
             </div>
-            <p>Вы будете автоматически авторизованы после закрытия окна.</p>
-            <button id="closeCredPopup">Я сохранил(а) логин и пароль</button>
-        </div>
-    `;
-    document.body.appendChild(overlay);
-    const closeBtn = overlay.querySelector('#closeCredPopup');
-    closeBtn.onclick = () => {
-        if (confirm('Вы точно сохранили логин и пароль? Закрыть окно?')) {
-            overlay.remove();
-            location.reload(); // перезагружаем страницу, чтобы обновить интерфейс
-        }
-    };
-}
+        `;
+        
+        document.body.appendChild(overlay);
+        
+        const closeBtn = overlay.querySelector('#closeCredPopup');
+        closeBtn.onclick = () => {
+            if (confirm('Вы точно сохранили логин и пароль? Закрыть окно?')) {
+                overlay.remove();
+                location.reload(); // Перезагружаем страницу, чтобы обновить статус авторизации
+            }
+        };
+    }
 
-
-function escapeHtml(str) {
-    return str.replace(/[&<>]/g, function(m) {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-    });
-}
-
-
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
 });

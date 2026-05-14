@@ -39,41 +39,43 @@ if ($isAjax && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $orderMan = new OrderManager();
     $userId = $_SESSION['auto_user_id'] ?? null;
 
-    if ($method === 'POST') {
-        if (!$userId) {
-            // Проверяем существование пользователя по email или телефону
-            $existing = $userMan->findUserByEmailOrPhone($email, $phone);
-            if ($existing) {
-                sendJson(['existing_user' => true, 'message' => 'У вас уже есть заказы. Пожалуйста, авторизуйтесь.'], 409);
-            }
-            $newUser = $userMan->createUser($full_name, $email, $phone, $consent);
-            if (!$newUser['success']) {
-                sendJson(['errors' => $newUser['errors']], 422);
-            }
-            $userId = $newUser['id'];
-            $_SESSION['auto_user_id'] = $userId;
-            $_SESSION['auto_user_login'] = $newUser['login'];
-            $orderId = $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
-            if ($orderId) {
-                sendJson([
-                    'message' => 'Order created',
-                    'order_id' => $orderId,
-                    'login' => $newUser['login'],
-                    'password' => $newUser['password'],
-                    'first_time' => true
-                ], 201);
-            } else {
-                sendJson(['error' => 'Failed to create order'], 500);
-            }
-        } else {
-            // Авторизован – создаём заказ (пользователь уже существует)
-            $orderId = $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
-            if ($orderId) {
-                sendJson(['message' => 'Order created', 'order_id' => $orderId], 201);
-            } else {
-                sendJson(['error' => 'Failed to create order'], 500);
-            }
+   if ($method === 'POST') {
+    if (!$userId) {
+        // Проверяем существование пользователя по email или телефону
+        $existing = $userMan->findUserByEmailOrPhone($email, $phone);
+        if ($existing) {
+            sendJson(['existing_user' => true, 'message' => 'У вас уже есть заказы. Пожалуйста, авторизуйтесь.'], 409);
         }
+        $newUser = $userMan->createUser($full_name, $email, $phone, $consent);
+        if (!$newUser['success']) {
+            sendJson(['errors' => $newUser['errors']], 422);
+        }
+        $userId = $newUser['id'];
+        $_SESSION['auto_user_id'] = $userId;
+        $_SESSION['auto_user_login'] = $newUser['login'];
+        $orderId = $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
+        if ($orderId) {
+            // Устанавливаем флаг, что это первый заказ (новый пользователь)
+            sendJson([
+                'message' => 'Order created',
+                'order_id' => $orderId,
+                'login' => $newUser['login'],
+                'password' => $newUser['password'],
+                'first_time' => true
+            ], 201);
+        } else {
+            sendJson(['error' => 'Failed to create order'], 500);
+        }
+    } else {
+        // Авторизован – создаём заказ (пользователь уже существует)
+        $orderId = $orderMan->createOrder($userId, $modelId, $packageId, $serviceIds, $totalPrice);
+        if ($orderId) {
+            sendJson(['message' => 'Order created', 'order_id' => $orderId], 201);
+        } else {
+            sendJson(['error' => 'Failed to create order'], 500);
+        }
+    }
+
     } else { // PUT – обновление (только для авторизованных)
         if (!$userId) sendJson(['error' => 'Unauthorized'], 401);
         $update = $userMan->updateUser($userId, $full_name, $email, $phone, $consent);
