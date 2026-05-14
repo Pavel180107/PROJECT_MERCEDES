@@ -103,9 +103,13 @@ class UserManager {
         return ['success' => true];
     }
 
-    public function authenticate($login, $password) {
-        $stmt = $this->db->prepare("SELECT id, login, password_hash FROM auto_users WHERE login = ?");
-        $stmt->execute([$login]);
+  public function authenticate($login, $password) {
+        $stmt = $this->db->prepare("
+            SELECT id, login, password_hash 
+            FROM auto_users 
+            WHERE login = ? OR email = ? OR phone = ?
+        ");
+        $stmt->execute([$login, $login, $login]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
         if ($user && password_verify($password, $user['password_hash'])) {
             return $user['id'];
