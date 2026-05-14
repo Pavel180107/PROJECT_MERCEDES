@@ -236,7 +236,7 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
                         <li><a href="#s-class">S-Class</a></li>
                     </ul>
                 </li>
-                <li><a href="#calculator">Калькулятор</a></li>
+                <li><a href="#old-calculator">Калькулятор</a></li>
                 <li><a href="#gallery">Галерея</a></li>
                 <li><a href="#blog">Блок статей</a></li>
 
@@ -400,84 +400,84 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
 
 
 
-    <!-- Calculator  -->
-    <section id="calculator">
-        <div class="section-title">
-            <h2>Калькулятор стоимости</h2>
-            <p>Рассчитайте стоимость вашего будущего Mercedes-Benz с учетом всех опций</p>
-        </div>
-        
-        <div class="calculator">
-            <form class="calculator-form" id="price-calculator">
-                <div class="form-group">
-                    <label for="model">Модель автомобиля</label>
-                    <select id="model" name="model">
-                        <option value="3200000">Mercedes A-Class - 3 200 000 ₽</option>
-                        <option value="4500000">Mercedes C-Class - 4 500 000 ₽</option>
-                        <option value="5800000">Mercedes E-Class - 5 800 000 ₽</option>
-                        <option value="8200000">Mercedes S-Class - 8 200 000 ₽</option>
-                        <option value="6800000">Mercedes GLC - 6 800 000 ₽</option>
-                        <option value="12500000">Mercedes-AMG GT - 12 500 000 ₽</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="color">Цвет кузова</label>
-                    <select id="color" name="color">
-                        <option value="0">Черный (стандартный)</option>
-                        <option value="75000">Серебристый (+75 000 ₽)</option>
-                        <option value="120000">Синий (+120 000 ₽)</option>
-                        <option value="180000">Дизайнерский цвет (+180 000 ₽)</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="interior">Отделка салона</label>
-                    <select id="interior" name="interior">
-                        <option value="0">Стандартная кожа Artico</option>
-                        <option value="220000">Кожа Nappa (+220 000 ₽)</option>
-                        <option value="380000">Дизайнерская кожа (+380 000 ₽)</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="wheels">Диски</label>
-                    <select id="wheels" name="wheels">
-                        <option value="0">Стандартные 17"</option>
-                        <option value="120000">Легкосплавные 18" (+120 000 ₽)</option>
-                        <option value="220000">Легкосплавные AMG 19" (+220 000 ₽)</option>
-                    </select>
-                </div>
-                
-                <div class="form-group full-width">
-                    <label>Дополнительные пакеты</label>
-                    <div class="options-group">
-                        <div class="option-checkbox">
-                            <input type="checkbox" id="panorama" name="panorama" value="180000">
-                            <label for="panorama">Панорамная крыша (+180 000 ₽)</label>
-                        </div>
-                        <div class="option-checkbox">
-                            <input type="checkbox" id="premium-sound" name="premium-sound" value="150000">
-                            <label for="premium-sound">Аудиосистема Burmester (+150 000 ₽)</label>
-                        </div>
-                        <div class="option-checkbox">
-                            <input type="checkbox" id="assist-package" name="assist-package" value="250000">
-                            <label for="assist-package">Пакет Driving Assistance (+250 000 ₽)</label>
-                        </div>
-                        <div class="option-checkbox">
-                            <input type="checkbox" id="amg-package" name="amg-package" value="320000">
-                            <label for="amg-package">AMG Line пакет (+320 000 ₽)</label>
-                        </div>
+    <!-- Старый калькулятор (независимый) -->
+<section id="old-calculator">
+    <div class="section-title">
+        <h2>Калькулятор стоимости</h2>
+        <p>Рассчитайте стоимость вашего будущего Mercedes-Benz с учетом всех опций</p>
+    </div>
+    
+    <div class="calculator">
+        <form class="calculator-form" id="old-price-calculator">
+            <div class="form-group">
+                <label for="old-model">Модель автомобиля</label>
+                <select id="old-model" name="old-model">
+                    <option value="3200000">Mercedes A-Class - 3 200 000 ₽</option>
+                    <option value="4500000">Mercedes C-Class - 4 500 000 ₽</option>
+                    <option value="5800000">Mercedes E-Class - 5 800 000 ₽</option>
+                    <option value="8200000">Mercedes S-Class - 8 200 000 ₽</option>
+                    <option value="6800000">Mercedes GLC - 6 800 000 ₽</option>
+                    <option value="12500000">Mercedes-AMG GT - 12 500 000 ₽</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="old-color">Цвет кузова</label>
+                <select id="old-color" name="old-color">
+                    <option value="0">Черный (стандартный)</option>
+                    <option value="75000">Серебристый (+75 000 ₽)</option>
+                    <option value="120000">Синий (+120 000 ₽)</option>
+                    <option value="180000">Дизайнерский цвет (+180 000 ₽)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="old-interior">Отделка салона</label>
+                <select id="old-interior" name="old-interior">
+                    <option value="0">Стандартная кожа Artico</option>
+                    <option value="220000">Кожа Nappa (+220 000 ₽)</option>
+                    <option value="380000">Дизайнерская кожа (+380 000 ₽)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="old-wheels">Диски</label>
+                <select id="old-wheels" name="old-wheels">
+                    <option value="0">Стандартные 17"</option>
+                    <option value="120000">Легкосплавные 18" (+120 000 ₽)</option>
+                    <option value="220000">Легкосплавные AMG 19" (+220 000 ₽)</option>
+                </select>
+            </div>
+            
+            <div class="form-group full-width">
+                <label>Дополнительные пакеты</label>
+                <div class="options-group">
+                    <div class="option-checkbox">
+                        <input type="checkbox" id="old-panorama" name="old-panorama" value="180000">
+                        <label for="old-panorama">Панорамная крыша (+180 000 ₽)</label>
+                    </div>
+                    <div class="option-checkbox">
+                        <input type="checkbox" id="old-premium-sound" name="old-premium-sound" value="150000">
+                        <label for="old-premium-sound">Аудиосистема Burmester (+150 000 ₽)</label>
+                    </div>
+                    <div class="option-checkbox">
+                        <input type="checkbox" id="old-assist-package" name="old-assist-package" value="250000">
+                        <label for="old-assist-package">Пакет Driving Assistance (+250 000 ₽)</label>
+                    </div>
+                    <div class="option-checkbox">
+                        <input type="checkbox" id="old-amg-package" name="old-amg-package" value="320000">
+                        <label for="old-amg-package">AMG Line пакет (+320 000 ₽)</label>
                     </div>
                 </div>
-                
-                <div class="calculator-result">
-                    <h3>Итоговая стоимость</h3>
-                    <div class="total-price" id="total-price">3 200 000 ₽</div>
-                </div>
-            </form>
-        </div>
-    </section>
+            </div>
+            
+            <div class="calculator-result">
+                <h3>Итоговая стоимость</h3>
+                <div class="total-price" id="old-total-price">3 200 000 ₽</div>
+            </div>
+        </form>
+    </div>
+</section>
 
 
 
@@ -665,7 +665,7 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
             <ul class="footer-links">
                 <li><a href="#">Главная</a></li>
                 <li><a href="#models">Модели</a></li>
-                <li><a href="#calculator">Калькулятор</a></li>
+                <li><a href="#old-calculator">Калькулятор</a></li>
                 
                 <li><a href="#gallery">Галерея</a></li>
                 <li><a href="#contact">Контакты</a></li>
@@ -684,7 +684,7 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
     <script src="script.js" defer></script>
     <script src="blog.js" defer></script>
     <script src="public/js/order.js" defer></script>
-    
+    <script src="public/js/calculator.js"></script>
 
 <?php if ($showSuccessPopup && isset($_SESSION['temp_credentials'])): ?>
         <div id="credentialsPopup" class="popup-overlay">

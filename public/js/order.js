@@ -50,11 +50,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify(data)
             });
             const result = await response.json();
-            if (response.ok) {
+
+
+
+
+            
+          if (response.ok) {
                 if (result.first_time) {
-                    // Показываем модальное окно с логином/паролем
+                    // Показываем окно с логином/паролем, перезагрузка после закрытия
                     showCredentialsPopup(result.login, result.password);
-                    location.reload(); // перезагружаем страницу, чтобы форма заменилась на авторизованную секцию
                 } else if (result.message === 'Order updated') {
                     document.getElementById('form-message').innerHTML = '<div class="success-message">Заказ обновлён!</div>';
                     document.getElementById('form-message').style.display = 'block';
@@ -89,27 +93,39 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function showCredentialsPopup(login, password) {
-        // Создаём модальное окно
-        const overlay = document.createElement('div');
-        overlay.className = 'popup-overlay';
-        overlay.innerHTML = `
-            <div class="popup-content">
-                <h3>🎉 Регистрация успешна!</h3>
-                <p>Ваши данные для входа (сохраните их!):</p>
-                <div class="credentials">
-                    <strong>Логин:</strong> ${login}<br>
-                    <strong>Пароль:</strong> ${password}
-                </div>
-                <p>Вы будете автоматически авторизованы после закрытия окна.</p>
-                <button id="closeCredPopup">Я сохранил(а) логин и пароль</button>
+    const overlay = document.createElement('div');
+    overlay.className = 'popup-overlay';
+    overlay.innerHTML = `
+        <div class="popup-content">
+            <h3>🎉 Регистрация успешна!</h3>
+            <p>Ваши данные для входа (сохраните их!):</p>
+            <div class="credentials">
+                <strong>Логин:</strong> ${escapeHtml(login)}<br>
+                <strong>Пароль:</strong> ${escapeHtml(password)}
             </div>
-        `;
-        document.body.appendChild(overlay);
-        const closeBtn = overlay.querySelector('#closeCredPopup');
-        closeBtn.onclick = () => {
-            if (confirm('Вы точно сохранили логин и пароль? Закрыть окно?')) {
-                overlay.remove();
-            }
-        };
-    }
+            <p>Вы будете автоматически авторизованы после закрытия окна.</p>
+            <button id="closeCredPopup">Я сохранил(а) логин и пароль</button>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    const closeBtn = overlay.querySelector('#closeCredPopup');
+    closeBtn.onclick = () => {
+        if (confirm('Вы точно сохранили логин и пароль? Закрыть окно?')) {
+            overlay.remove();
+            location.reload(); // перезагружаем страницу, чтобы обновить интерфейс
+        }
+    };
+}
+
+
+function escapeHtml(str) {
+    return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
+
 });
