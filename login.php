@@ -11,7 +11,7 @@ if (isset($_SESSION['auto_user_id'])) {
 
 $error = '';
 $loginInput = '';
-$redirect = isset($_GET['redirect']) ? $_GET['redirect'] : 'index';
+$redirect = isset($_GET['redirect']) ? $_GET['redirect'] : 'index.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $loginInput = trim($_POST['login']);
