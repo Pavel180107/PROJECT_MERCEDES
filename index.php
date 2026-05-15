@@ -263,18 +263,19 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
     display: none;
 }
 /* Блок чекбокса – текст слева, чекбокс сразу после него */
+/* Чекбокс согласия – текст и чекбокс на одной строке, без растяжения */
 .checkbox .checkbox-wrapper {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 0.8rem;          /* расстояние между текстом и чекбоксом */
-    width: auto;          /* не растягиваем на всю ширину */
+    gap: 0.8rem;
+    flex-wrap: nowrap;
 }
 
 .checkbox .checkbox-wrapper label {
     margin: 0;
     cursor: pointer;
     color: #ddd;
-    font-weight: normal;
+    white-space: nowrap;      /* чтобы текст не переносился */
 }
 
 .checkbox .checkbox-wrapper input[type="checkbox"] {
@@ -286,7 +287,7 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
     flex-shrink: 0;
 }
 
-/* Сообщение об ошибке под строкой */
+/* Ошибка под строкой */
 .checkbox .field-error {
     margin-top: 5px;
     font-size: 0.85rem;
