@@ -262,32 +262,31 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
 .services-group input[type="checkbox"] {
     display: none;
 }
-/* Блок чекбокса – горизонтальное выравнивание */
+/* Блок чекбокса – текст слева, чекбокс сразу после него */
 .checkbox .checkbox-wrapper {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 100%;
-    gap: 1rem;
+    gap: 0.8rem;          /* расстояние между текстом и чекбоксом */
+    width: auto;          /* не растягиваем на всю ширину */
 }
 
 .checkbox .checkbox-wrapper label {
     margin: 0;
     cursor: pointer;
-    flex: 1;
     color: #ddd;
+    font-weight: normal;
 }
 
 .checkbox .checkbox-wrapper input[type="checkbox"] {
     width: 20px;
     height: 20px;
     margin: 0;
-    flex-shrink: 0;
     cursor: pointer;
     accent-color: #00A0E3;
+    flex-shrink: 0;
 }
 
-/* Сообщение об ошибке не должно влиять на строку */
+/* Сообщение об ошибке под строкой */
 .checkbox .field-error {
     margin-top: 5px;
     font-size: 0.85rem;
