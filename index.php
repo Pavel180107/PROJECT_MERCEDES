@@ -213,6 +213,56 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
             border: 1px solid #ff8a80 !important;
         }
         .field-error { color: #ff8a80; font-size: 0.8rem; margin-top: 0.3rem; }
+/* Чекбокс согласия: текст слева, чекбокс справа */
+.checkbox label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+}
+.checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-left: 1rem;
+    flex-shrink: 0;
+    accent-color: #00A0E3;
+}
+
+/* Дополнительные услуги – кнопки-переключатели */
+.services-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 0.5rem;
+}
+.service-btn {
+    display: inline-block;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 40px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    color: #ddd;
+}
+.service-btn:hover {
+    background: #3a3a3a;
+    border-color: #00A0E3;
+    transform: translateY(-2px);
+}
+.service-btn.active {
+    background: #00A0E3;
+    border-color: #00A0E3;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0,160,227,0.4);
+}
+.services-group input[type="checkbox"] {
+    display: none;
+}
+
     </style>
 </head>
 <body>
@@ -639,13 +689,13 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
             <div class="form-group">
                 <label>Дополнительные услуги</label>
                 <div class="services-group" id="services_group">
-                    <?php foreach ($services as $s): ?>
-                        <label>
-                            <input type="checkbox" name="services[]" value="<?= $s['id'] ?>" data-price="<?= $s['price_add'] ?>" <?= in_array($s['id'], $formData['services']) ? 'checked' : '' ?>>
-                            <?= htmlspecialchars($s['name']) ?> (+<?= number_format($s['price_add'], 0, '', ' ') ?> ₽)
-                        </label>
-                    <?php endforeach; ?>
-                </div>
+    <?php foreach ($services as $s): ?>
+        <label class="service-btn <?= in_array($s['id'], $formData['services']) ? 'active' : '' ?>">
+            <input type="checkbox" name="services[]" value="<?= $s['id'] ?>" data-price="<?= $s['price_add'] ?>" <?= in_array($s['id'], $formData['services']) ? 'checked' : '' ?> style="display: none;">
+            <?= htmlspecialchars($s['name']) ?> (+<?= number_format($s['price_add'], 0, '', ' ') ?> ₽)
+        </label>
+    <?php endforeach; ?>
+</div>
             </div>
 
             <div class="calculator-result">

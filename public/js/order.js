@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('order-form');
     if (!form) return;
 
+    // Функция пересчёта итоговой стоимости
     function updateTotalPrice() {
         let total = 0;
         const modelSelect = document.getElementById('model_id');
@@ -15,11 +16,57 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('total_price_hidden').value = total;
     }
 
+    // Инициализация кнопок для дополнительных услуг
+    function initServiceButtons() {
+        const serviceBtns = document.querySelectorAll('.service-btn');
+        serviceBtns.forEach(btn => {
+            const checkbox = btn.querySelector('input[type="checkbox"]');
+            if (!checkbox) return;
+
+            // Устанавливаем начальное состояние класса active в соответствии с чекбоксом
+            if (checkbox.checked) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+
+            // Удаляем старый обработчик, чтобы не навешивать несколько раз
+            btn.removeEventListener('click', btn._clickHandler);
+            const clickHandler = (e) => {
+                e.preventDefault();
+                // Переключаем состояние чекбокса
+                checkbox.checked = !checkbox.checked;
+                // Меняем класс active у кнопки
+                if (checkbox.checked) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+                // Искусственно вызываем событие change у чекбокса, чтобы сработал общий обработчик
+                const changeEvent = new Event('change', { bubbles: true });
+                checkbox.dispatchEvent(changeEvent);
+                updateTotalPrice();
+            };
+            btn._clickHandler = clickHandler;
+            btn.addEventListener('click', clickHandler);
+        });
+    }
+
+    // Обработчики для базовых элементов формы
     document.getElementById('model_id').addEventListener('change', updateTotalPrice);
     document.getElementById('package_id').addEventListener('change', updateTotalPrice);
-    document.querySelectorAll('input[name="services[]"]').forEach(cb => cb.addEventListener('change', updateTotalPrice));
+    // Обработчик для всех чекбоксов услуг (включая те, что внутри кнопок)
+    document.querySelectorAll('input[name="services[]"]').forEach(cb => {
+        cb.addEventListener('change', updateTotalPrice);
+    });
+
+    // Инициализируем кнопки
+    initServiceButtons();
+
+    // Первоначальный расчёт стоимости
     updateTotalPrice();
 
+    // Обработка отправки формы (AJAX)
     form.addEventListener('submit', async function(e) {
         if (window.fetch) e.preventDefault();
 
@@ -34,6 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
             total_price: parseFloat(document.getElementById('total-price').innerText.replace(/[^0-9.-]+/g, ''))
         };
 
+        // Очищаем предыдущие сообщения об ошибках
         document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
         document.getElementById('form-message').style.display = 'none';
 
@@ -52,7 +100,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = await response.json();
             if (response.ok) {
                 if (result.first_time) {
-                    // Показываем popup с логином/паролем, НЕ перезагружаем страницу сразу
                     showCredentialsPopup(result.login, result.password);
                 } else if (result.message === 'Order updated') {
                     document.getElementById('form-message').innerHTML = '<div class="success-message">Заказ обновлён!</div>';
@@ -61,6 +108,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('form-message').innerHTML = '<div class="success-message">Новый заказ создан!</div>';
                     document.getElementById('form-message').style.display = 'block';
                     form.reset();
+                    // Сбросить активные классы кнопок
+                    document.querySelectorAll('.service-btn').forEach(btn => btn.classList.remove('active'));
                     updateTotalPrice();
                 }
             } else {
@@ -86,8 +135,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Функция показа модального окна с логином и паролем
     function showCredentialsPopup(login, password) {
-        // Создаём затемнённый фон
         const overlay = document.createElement('div');
         overlay.style.position = 'fixed';
         overlay.style.top = '0';
@@ -101,7 +150,6 @@ document.addEventListener('DOMContentLoaded', function() {
         overlay.style.alignItems = 'center';
         overlay.style.justifyContent = 'center';
         
-        // Содержимое окна
         overlay.innerHTML = `
             <div style="background: #1a1a1a; border-radius: 20px; padding: 2rem; max-width: 500px; text-align: center; border: 2px solid #00A0E3; box-shadow: 0 0 30px rgba(0,160,227,0.5);">
                 <h3 style="color: #00A0E3; margin-bottom: 1rem;">🎉 Регистрация успешна!</h3>
@@ -121,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
         closeBtn.onclick = () => {
             if (confirm('Вы точно сохранили логин и пароль? Закрыть окно?')) {
                 overlay.remove();
-                location.reload(); // Перезагружаем страницу, чтобы обновить статус авторизации
+                location.reload();
             }
         };
     }
