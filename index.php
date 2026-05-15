@@ -213,7 +213,7 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
             border: 1px solid #ff8a80 !important;
         }
         .field-error { color: #ff8a80; font-size: 0.8rem; margin-top: 0.3rem; }
-/* Чекбокс согласия: текст слева, чекбокс справа */
+
 .checkbox label {
     display: flex;
     justify-content: space-between;
@@ -229,7 +229,7 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
     accent-color: #00A0E3;
 }
 
-/* Дополнительные услуги – кнопки-переключатели */
+
 .services-group {
     display: flex;
     flex-wrap: wrap;
@@ -262,8 +262,6 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
 .services-group input[type="checkbox"] {
     display: none;
 }
-/* Блок чекбокса – текст слева, чекбокс сразу после него */
-/* Чекбокс согласия – текст и чекбокс на одной строке, без растяжения */
 .checkbox .checkbox-wrapper {
     display: inline-flex;
     align-items: center;
@@ -275,7 +273,7 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
     margin: 0;
     cursor: pointer;
     color: #ddd;
-    white-space: nowrap;      /* чтобы текст не переносился */
+    white-space: nowrap;      
 }
 
 .checkbox .checkbox-wrapper input[type="checkbox"] {
@@ -344,14 +342,14 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
         </div>
     </header>
 
-    <!-- Секция моделей (без изменений) -->
+    <!-- Секция моделей  -->
     <section id="models">
         <div class="section-title">
             <h2>Наши модели</h2>
             <p>Выберите идеальный Mercedes-Benz из нашего премиального каталога</p>
         </div>
         <div class="models-grid">
-            <!-- динамические карточки моделей – оставим статическими, чтобы не усложнять -->
+            
             <div class="model-card" id="a-class">
                 <div class="model-img">
                     <img src="black-a-class.jfif" alt="Mercedes A-Class" id="model-1-img">
@@ -415,7 +413,7 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
         </div>
     </section>
 
-    <!-- Таблица AMG (без изменений) -->
+    <!-- Таблица AMG  -->
     <section class="performance-models">
  <div class="section-title">
             <h2>Самые мощные Mercedes-AMG</h2>
@@ -482,7 +480,7 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
 
 
 
-    <!-- Старый калькулятор (независимый) -->
+    <!-- Старый калькулятор  -->
 <section id="old-calculator">
     <div class="section-title">
         <h2>Калькулятор стоимости</h2>
@@ -564,7 +562,7 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
 
 
 
-    <!-- Галерея (без изменений) -->
+    <!-- Галерея  -->
     <section id="gallery">
 <div class="section-title">
             <h2>Галерея Mercedes-Benz</h2>
@@ -614,7 +612,7 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
 
     </section>
 
-    <!-- Блог (без изменений) -->
+    <!-- Блог  -->
     <section id="blog">
 <div class="section-title">
         <h2>Блог & Новости</h2>
@@ -651,7 +649,7 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
     
     
     </section>
-    <!-- ...  ... -->
+    
 
      <section class="order-section" id="order-form-section">
         <h2 style="text-align:center;">Оформить заказ</h2>
