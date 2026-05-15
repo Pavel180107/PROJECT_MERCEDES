@@ -319,7 +319,7 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
                 <li><a href="#old-calculator">Калькулятор</a></li>
                 <li><a href="#gallery">Галерея</a></li>
                 <li><a href="#blog">Блок статей</a></li>
-
+                <li><a href="bd.html">Работа с БД</a></li>
                 
                  <li><a href="#order-form-section">Заказать</a></li>
                 <?php if ($isLoggedIn): ?>

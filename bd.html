@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Работа с БД – Лабораторная работа №8 (u82316 / u82321)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(145deg, #d4e6f1 0%, #d9d2f0 100%);
+            color: #2c3a4b;
+            padding: 35px 25px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: rgba(255, 250, 245, 0.92);
+            border-radius: 35px;
+            box-shadow: 0 20px 35px rgba(96, 68, 128, 0.15);
+            overflow: hidden;
+            border: 1px solid #cfc3e8;
+            padding: 30px;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            color: #5f4b8b;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6f5b8e;
+            font-size: 1.05rem;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #cfc3e8;
+            padding-bottom: 15px;
+        }
+
+        .step {
+            background: #fefcf9;
+            margin: 30px 0;
+            border-radius: 28px;
+            padding: 25px;
+            border: 1px solid #e0d6f0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .step:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            font-size: 1.7rem;
+            color: #5f4b8b;
+            border-left: 6px solid #9ac2b8;
+            padding-left: 18px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .desc {
+            background: #f6f3fc;
+            padding: 15px 20px;
+            border-radius: 18px;
+            margin: 15px 0;
+            line-height: 1.6;
+            color: #3a4a5c;
+        }
+
+        .screenshot {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .screenshot img {
+            max-width: 100%;
+            border-radius: 16px;
+            border: 1px solid #cfc3e8;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .caption {
+            margin-top: 12px;
+            font-style: italic;
+            font-size: 0.9rem;
+            color: #8f7bb0;
+        }
+
+        code {
+            background: #e5ddf5;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-family: monospace;
+            color: #6f9e8f;
+            font-weight: 500;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #cfc3e8;
+        }
+        .back-link a {
+            background: #e8dfd9;
+            color: #5f4b8b;
+            padding: 10px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .back-link a:hover {
+            background: #d9cfe8;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.85rem;
+            color: #8f7bb0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📁 Работа с базой данных</h1>
+    <div class="subtitle">Лабораторная работа №8 – создание, настройка и наполнение таблиц для автомобильного заказа</div>
+
+    <!-- 0. SSH-подключение -->
+    <div class="step">
+        <h2>0. Подключение к серверу и вход в MySQL</h2>
+        <div class="desc">
+            <p>Работа начинается с подключения по SSH к учебному серверу <code>kubsu-dev.ru</code> под пользователем <strong>u82316</strong>. После успешного входа запускаем клиент MySQL с паролем, совпадающим с паролем учётной записи.</p>
+        </div>
+        <div class="screenshot">
+            <img src="0_WEB.png" alt="SSH-сессия и вход в MySQL">
+            <div class="caption">Скриншот 0 – Подключение через PuTTY, ввод пароля, команда <code>mysql -u u82316 -p</code>, выбор БД <code>USE u82316;</code></div>
+        </div>
+    </div>
+
+    <!-- 1. Таблица auto_users -->
+    <div class="step">
+        <h2>1. Создание таблицы <code>auto_users</code></h2>
+        <div class="desc">
+            <p>Таблица хранит данные пользователей: ФИО, email, телефон, согласие, уникальный логин и хеш пароля. Поля <code>email</code> и <code>phone</code> изначально были уникальными (для предотвращения дублей).</p>
+        </div>
+        <div class="screenshot">
+            <img src="1_BD.png" alt="CREATE TABLE auto_users">
+            <div class="caption">Скриншот 1 – Создание таблицы пользователей (уникальные email и phone)</div>
+        </div>
+    </div>
+
+    <!-- 2. Таблица auto_car_models -->
+    <div class="step">
+        <h2>2. Таблица моделей автомобилей <code>auto_car_models</code></h2>
+        <div class="desc">
+            <p>Содержит доступные модели Mercedes-Benz: название, класс, базовая цена, описание, ссылка на изображение.</p>
+        </div>
+        <div class="screenshot">
+            <img src="2_BD.png" alt="CREATE TABLE auto_car_models">
+            <div class="caption">Скриншот 2 – Структура таблицы моделей</div>
+        </div>
+    </div>
+
+    <!-- 3. Таблица auto_packages -->
+    <div class="step">
+        <h2>3. Таблица пакетов опций <code>auto_packages</code></h2>
+        <div class="desc">
+            <p>Хранит пакеты дополнительного оснащения (Комфорт, Премиум, AMG Dynamic) с фиксированной добавочной стоимостью.</p>
+        </div>
+        <div class="screenshot">
+            <img src="3_BD.png" alt="CREATE TABLE auto_packages">
+            <div class="caption">Скриншот 3 – Пакеты опций</div>
+        </div>
+    </div>
+
+    <!-- 4. Таблица auto_additional_services -->
+    <div class="step">
+        <h2>4. Таблица дополнительных услуг <code>auto_additional_services</code></h2>
+        <div class="desc">
+            <p>Отдельные услуги (защита днища, зимний пакет, аудиосистема, химчистка, полировка) с типом и стоимостью.</p>
+        </div>
+        <div class="screenshot">
+            <img src="4_BD.png" alt="CREATE TABLE auto_additional_services">
+            <div class="caption">Скриншот 4 – Дополнительные услуги</div>
+        </div>
+    </div>
+
+    <!-- 5. Таблица auto_orders -->
+    <div class="step">
+        <h2>5. Таблица заказов <code>auto_orders</code></h2>
+        <div class="desc">
+            <p>Основная таблица заказов: привязка к пользователю (<code>user_id</code>), выбранная модель, пакет, итоговая цена, статус, дата создания. Внешние ключи на <code>auto_users</code>, <code>auto_car_models</code>, <code>auto_packages</code>.</p>
+        </div>
+        <div class="screenshot">
+            <img src="5_BD.png" alt="CREATE TABLE auto_orders">
+            <div class="caption">Скриншот 5 – Таблица заказов с внешними ключами</div>
+        </div>
+    </div>
+
+    <!-- 6. Таблица связи заказов и услуг -->
+    <div class="step">
+        <h2>6. Таблица <code>auto_order_services</code> (многие ко многим)</h2>
+        <div class="desc">
+            <p>Связывает заказы и дополнительные услуги. Каждая запись означает, что к заказу добавлена определённая услуга.</p>
+        </div>
+        <div class="screenshot">
+            <img src="6_BD.png" alt="CREATE TABLE auto_order_services">
+            <div class="caption">Скриншот 6 – Промежуточная таблица order_services</div>
+        </div>
+    </div>
+
+    <!-- 7. Наполнение моделей -->
+    <div class="step">
+        <h2>7. Заполнение таблицы <code>auto_car_models</code> данными</h2>
+        <div class="desc">
+            <p>Вставлено 7 популярных моделей Mercedes-Benz с разными классами и базовыми ценами (от A 200 до AMG GT 63).</p>
+        </div>
+        <div class="screenshot">
+            <img src="7_BD.png" alt="INSERT INTO auto_car_models">
+            <div class="caption">Скриншот 7 – Добавление моделей</div>
+        </div>
+    </div>
+
+    <!-- 8. Наполнение пакетов -->
+    <div class="step">
+        <h2>8. Заполнение таблицы <code>auto_packages</code></h2>
+        <div class="desc">
+            <p>Добавлены четыре пакета: Базовый, Комфорт, Премиум, AMG Dynamic – с соответствующими надбавками к цене.</p>
+        </div>
+        <div class="screenshot">
+            <img src="8_BD.png" alt="INSERT INTO auto_packages">
+            <div class="caption">Скриншот 8 – Вставка пакетов опций</div>
+        </div>
+    </div>
+
+    <!-- 9. Наполнение услуг -->
+    <div class="step">
+        <h2>9. Заполнение таблицы <code>auto_additional_services</code></h2>
+        <div class="desc">
+            <p>Вставлено пять дополнительных услуг, которые пользователь может выбрать отдельно от пакета.</p>
+        </div>
+        <div class="screenshot">
+            <img src="9_BD.png" alt="INSERT INTO auto_additional_services">
+            <div class="caption">Скриншот 9 – Добавление услуг</div>
+        </div>
+    </div>
+
+    <!-- 10. Проверка создания всех таблиц -->
+    <div class="step">
+        <h2>10. Просмотр списка созданных таблиц</h2>
+        <div class="desc">
+            <p>Команда <code>SHOW TABLES LIKE 'auto_%';</code> выводит все шесть таблиц с префиксом <code>auto_</code>. Все они успешно созданы.</p>
+        </div>
+        <div class="screenshot">
+            <img src="10_BD.png" alt="SHOW TABLES">
+            <div class="caption">Скриншот 10 – Список всех auto-таблиц</div>
+        </div>
+    </div>
+
+    <!-- 11. Описание структуры auto_orders -->
+    <div class="step">
+        <h2>11. Структура таблицы заказов</h2>
+        <div class="desc">
+            <p>Команда <code>DESCRIBE auto_orders;</code> показывает поля, их типы, ключи и значения по умолчанию.</p>
+        </div>
+        <div class="screenshot">
+            <img src="11_BD.png" alt="DESCRIBE auto_orders">
+            <div class="caption">Скриншот 11 – Детальное описание полей таблицы заказов</div>
+        </div>
+    </div>
+
+    <!-- 12. Удаление уникальных ограничений и добавление индексов -->
+    <div class="step">
+        <h2>12. Настройка полей email и phone (удаление UNIQUE, добавление обычных индексов)</h2>
+        <div class="desc">
+            <p>Для реализации возможности повторной отправки формы с тем же email/телефоном (чтобы пользователь мог оформить несколько заказов) были сняты ограничения уникальности. Вместо них созданы обычные индексы для ускорения поиска.</p>
+            <ul>
+                <li><code>ALTER TABLE auto_users DROP INDEX email;</code> – удалён уникальный индекс email</li>
+                <li><code>ALTER TABLE auto_users DROP INDEX phone;</code> – индекс phone не существовал (ошибка игнорируется)</li>
+                <li><code>ALTER TABLE auto_users ADD INDEX idx_email (email);</code> – добавлен обычный индекс</li>
+                <li><code>ALTER TABLE auto_users ADD INDEX idx_phone (phone);</code> – добавлен индекс для телефона</li>
+            </ul>
+        </div>
+        <div class="screenshot">
+            <img src="12_ИВ.png" alt="Изменение структуры auto_users">
+            <div class="caption">Скриншот 12 – Удаление UNIQUE и добавление обычных индексов</div>
+        </div>
+    </div>
+
+    <div class="back-link">
+        <a href="index.php">← Вернуться на главную страницу проекта</a>
+    </div>
+    <footer>
+        Отчёт по этапу «База данных» — Лабораторная работа №8 (команда: Артём u82321, Павел u82316)
+    </footer>
+</div>
+</body>
+</html>
