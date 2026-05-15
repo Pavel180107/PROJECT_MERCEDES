@@ -330,8 +330,16 @@ if (isset($_GET['search'])) {
             text-align: center;
         }
         .back-link a {
-            color: #00A0E3;
+            background: #00A0E3;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
             text-decoration: none;
+            display: inline-block;
+        }
+        .back-link a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0,0,0,0.2);
         }
     </style>
 </head>
