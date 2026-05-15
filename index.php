@@ -262,7 +262,37 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
 .services-group input[type="checkbox"] {
     display: none;
 }
+/* Блок чекбокса – горизонтальное выравнивание */
+.checkbox .checkbox-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 1rem;
+}
 
+.checkbox .checkbox-wrapper label {
+    margin: 0;
+    cursor: pointer;
+    flex: 1;
+    color: #ddd;
+}
+
+.checkbox .checkbox-wrapper input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    accent-color: #00A0E3;
+}
+
+/* Сообщение об ошибке не должно влиять на строку */
+.checkbox .field-error {
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: #ff8a80;
+}
     </style>
 </head>
 <body>
@@ -656,12 +686,12 @@ $showSuccessPopup = isset($_GET['show_credentials']) && $_GET['show_credentials'
                 <div class="field-error" id="error-phone"></div>
             </div>
             <div class="form-group checkbox">
-                <label>
-                    <input type="checkbox" name="consent" id="consent" value="1" <?= $formData['consent'] ? 'checked' : '' ?> required>
-                    Согласие на обработку персональных данных
-                </label>
-                <div class="field-error" id="error-consent"></div>
-            </div>
+    <div class="checkbox-wrapper">
+        <label for="consent">Согласие на обработку персональных данных</label>
+        <input type="checkbox" name="consent" id="consent" value="1" <?= $formData['consent'] ? 'checked' : '' ?> required>
+    </div>
+    <div class="field-error" id="error-consent"></div>
+</div>
 
             <div class="form-group">
                 <label>Модель</label>
